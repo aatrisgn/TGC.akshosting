@@ -104,6 +104,10 @@ jobs:
         resource-group: '${{ needs.deploy_aks.outputs.AKS_RESOURCE_GROUP_NAME  }}' 
         cluster-name: '${{ needs.deploy_aks.outputs.AKS_CLUSER_NAME }}'
 
-    - name: test command
+    - name: Create ArgoCD config
       run: |
-        kubectl get nodes
+        kubectl create namespace argocd
+        kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+        k get services -n argocd
+        kubectl port-forward service/argocd-server -n argocd 8080:443
