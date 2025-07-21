@@ -103,3 +103,7 @@ jobs:
       with:
         resource-group: '${{ needs.deploy_aks.outputs.AKS_RESOURCE_GROUP_NAME  }}' 
         cluster-name: '${{ needs.deploy_aks.outputs.AKS_CLUSER_NAME }}'
+
+    - name: test command
+      run: |
+        kubectl get nodes
