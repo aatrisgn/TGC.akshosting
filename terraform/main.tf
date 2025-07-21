@@ -27,3 +27,27 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     environment = "personal"
   }
 }
+
+resource azurerm_kubernetes_cluster_extension "argocd_configuration"{
+  name           = "argocd-ext"
+  cluster_id     = azurerm_kubernetes_cluster.aks_cluster.id
+  extension_type = "Microsoft.ArgoCD"
+  release_train = "Preview"
+  version = "0.0.7-preview"
+  configuration_settings = { 
+    "keydeployWithHightAvailability" = false
+    "namespaceInstall" = false
+    "config-maps.argocd-cmd-params-cm.data.application\\.namespaces" = "namespace1,namespace2"
+     }
+}
+
+# az k8s-extension create --resource-group <resource-group> --cluster-name <cluster-name> \
+# --cluster-type managedClusters \
+# --name argocd \
+# --extension-type Microsoft.ArgoCD \
+# --auto-upgrade false \
+# --release-train preview \
+# --version 0.0.7-preview \
+# --config deployWithHightAvailability=false \
+# --config namespaceInstall=false \
+# --config "config-maps.argocd-cmd-params-cm.data.application\.namespaces=namespace1,namespace2"

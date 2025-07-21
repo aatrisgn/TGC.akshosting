@@ -104,15 +104,14 @@ jobs:
         resource-group: '${{ needs.deploy_aks.outputs.AKS_RESOURCE_GROUP_NAME  }}' 
         cluster-name: '${{ needs.deploy_aks.outputs.AKS_CLUSER_NAME }}'
 
-    - name: Create ArgoCD config
-      run: |
-        kubectl get namespace argocd || kubectl create namespace argocd
+    # - name: Create ArgoCD config
+    #   run: |
+    #     kubectl get namespace argocd || kubectl create namespace argocd
 
-        if ! kubectl get deployment argocd-server -n argocd > /dev/null 2>&1; then
-          kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-        else
-          echo "Argo CD already installed. Skipping apply."
-        fi
+    #     if ! kubectl get deployment argocd-server -n argocd > /dev/null 2>&1; then
+    #       kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+    #     else
+    #       echo "Argo CD already installed. Skipping apply."
+    #     fi
 
-        kubectl get services -n argocd
-        kubectl port-forward service/argocd-server -n argocd 8080:443
+    #     kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
