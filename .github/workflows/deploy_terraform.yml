@@ -13,9 +13,14 @@ permissions:
   pull-requests: write
 
 jobs:
-  build_job:
+  deploy_aks:
     runs-on: ubuntu-latest
     environment: dev
+
+    outputs:
+      AKS_CLUSER_NAME: ${{ steps.set_outputs.outputs.AKS_CLUSER_NAME }}
+      AKS_RESOURCE_GROUP_NAME: ${{ steps.set_outputs.outputs.AKS_RESOURCE_GROUP_NAME }}
+
     defaults:
       run:
         working-directory: ./terraform
@@ -49,7 +54,51 @@ jobs:
 
     - name: Terraform Plan
       id: plan
-      run: terraform plan -input=false -var-file="envs/dev.tfvars" -out=tfplan #UPDATE VARS file
+      run: terraform plan -input=false -var-file="envs/dev.tfvars" -out=tfplan
 
-    # - name: Terraform Apply
-    #   run: terraform apply -auto-approve tfplan
+    - name: Terraform Apply
+      run: terraform apply -auto-approve tfplan
+    
+    - name: Terraform Output
+      id: tf_output
+      run: |
+        echo "AKS_CLUSER_NAME=$(terraform output -raw aks_cluster_name)" >> $GITHUB_ENV
+        echo "AKS_RESOURCE_GROUP_NAME=$(terraform output -raw aks_resource_group_name)" >> $GITHUB_ENV
+    
+    - name: Set outputs
+      id: set_outputs
+      run: |
+        echo "AKS_CLUSER_NAME=${{ env.AKS_CLUSER_NAME }}" >> $GITHUB_OUTPUT
+        echo "AKS_RESOURCE_GROUP_NAME=${{ env.AKS_RESOURCE_GROUP_NAME }}" >> $GITHUB_OUTPUT
+  
+  configure_aks:
+    runs-on: ubuntu-latest
+    environment: dev
+    
+    # env:
+    #   ARM_CLIENT_ID: "${{ secrets.AKSHOSTING_DEV_CLIENT_ID }}"
+    #   ARM_SUBSCRIPTION_ID: "${{ secrets.AKSHOSTING_DEV_SUBSCRIPTION_ID }}"
+    #   ARM_TENANT_ID: "${{ secrets.AKSHOSTING_DEV_TENANT_ID }}"
+    #   ARM_USE_AZUREAD: true
+    #   ENVIRONMENT_NAME: dev
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Azure CLI Login
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AKSHOSTING_DEV_CLIENT_ID }}
+        tenant-id: ${{ secrets.AKSHOSTING_DEV_TENANT_ID }}
+        subscription-id: ${{ secrets.AKSHOSTING_DEV_SUBSCRIPTION_ID }}
+
+    - name: Setup kubectl
+      id: install-kubectl
+      uses: azure/setup-kubectl@v3
+
+    - name: Set AKS context
+      id: set-context
+      uses: azure/aks-set-context@v3
+      with:
+        resource-group: '${{ needs.deploy_aks.outputs.AKS_RESOURCE_GROUP_NAME  }}' 
+        cluster-name: '${{ needs.deploy_aks.outputs.AKS_CLUSER_NAME }}'
