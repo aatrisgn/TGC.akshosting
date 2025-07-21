@@ -28,17 +28,17 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   }
 }
 
-resource azurerm_kubernetes_cluster_extension "argocd_configuration"{
+resource "azurerm_kubernetes_cluster_extension" "argocd_configuration" {
   name           = "argocd-ext"
   cluster_id     = azurerm_kubernetes_cluster.aks_cluster.id
   extension_type = "Microsoft.ArgoCD"
-  release_train = "Preview"
-  version = "0.0.7-preview"
-  configuration_settings = { 
-    "keydeployWithHightAvailability" = false
-    "namespaceInstall" = false
+  release_train  = "Preview"
+  #version = "0.0.7-preview"
+  configuration_settings = {
+    "keydeployWithHightAvailability"                                 = false
+    "namespaceInstall"                                               = false
     "config-maps.argocd-cmd-params-cm.data.application\\.namespaces" = "namespace1,namespace2"
-     }
+  }
 }
 
 # az k8s-extension create --resource-group <resource-group> --cluster-name <cluster-name> \
