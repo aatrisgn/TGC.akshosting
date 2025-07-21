@@ -1,0 +1,37 @@
+name: Format Terraform
+
+on:
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  build_job:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./terraform
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Terraform
+      run: bash "${{ github.workspace }}/.github/scripts/install_terraform.sh" 
+
+    - name: Terraform Fmt
+      run: terraform fmt -recursive
+    
+    - name: Terraform Fmt
+      run: terraform fmt -check
+    
+    - name: Commit and push changes
+      run: |
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+        git add .
+        git diff --cached --quiet || git commit -m "Auto-format Terraform files"
+        git push

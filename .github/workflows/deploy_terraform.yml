@@ -15,7 +15,7 @@ permissions:
 jobs:
   build_job:
     runs-on: ubuntu-latest
-    environment: dev #Should be changed, lol
+    environment: dev
     defaults:
       run:
         working-directory: ./terraform
@@ -34,7 +34,7 @@ jobs:
       run: bash "${{ github.workspace }}/.github/scripts/install_terraform.sh" 
 
     - name: Terraform Fmt
-      run: terraform fmt -check
+      run: terraform fmt -recursive
 
     - name: Terraform Init
       run: |

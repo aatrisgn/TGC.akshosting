@@ -1,7 +1,7 @@
 
 resource "azurerm_user_assigned_identity" "aks_identity" {
   name                = "ui-akshosting-${var.environment_type_name}-${local.resource_location_name}"
-  resource_group_name = data.azurerm_resource_group.default_resource_group.names
+  resource_group_name = data.azurerm_resource_group.default_resource_group.name
   location            = data.azurerm_resource_group.default_resource_group.location
 }
 
