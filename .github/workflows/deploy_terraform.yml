@@ -57,7 +57,7 @@ jobs:
       run: terraform plan -input=false -var-file="envs/dev.tfvars" -var=tenant_id=${{ secrets.AKSHOSTING_DEV_TENANT_ID }} -out=tfplan
 
     - name: Terraform Apply
-      run: terraform apply -auto-approve tfplan
+      run: terraform apply -auto-approve tfplan -json
     
     - name: Terraform Output
       id: tf_output
@@ -114,27 +114,27 @@ jobs:
         az extension update -n k8s-configuration
         az extension update -n k8s-extension
 
-    - name: Configure AKS for ArgoCD
-      run: |
-        az k8s-extension create --resource-group ${{ needs.deploy_aks.outputs.AKS_RESOURCE_GROUP_NAME  }} --cluster-name ${{ needs.deploy_aks.outputs.AKS_CLUSER_NAME }} \
-        --cluster-type managedClusters \
-        --name argocd \
-        --extension-type Microsoft.ArgoCD \
-        --auto-upgrade false \
-        --release-train preview \
-        --version 0.0.7-preview \
-        --config deployWithHightAvailability=false \
-        --config namespaceInstall=false
+    # - name: Configure AKS for ArgoCD
+    #   run: |
+    #     az k8s-extension create --resource-group ${{ needs.deploy_aks.outputs.AKS_RESOURCE_GROUP_NAME  }} --cluster-name ${{ needs.deploy_aks.outputs.AKS_CLUSER_NAME }} \
+    #     --cluster-type managedClusters \
+    #     --name argocd \
+    #     --extension-type Microsoft.ArgoCD \
+    #     --auto-upgrade false \
+    #     --release-train preview \
+    #     --version 0.0.7-preview \
+    #     --config deployWithHightAvailability=false \
+    #     --config namespaceInstall=false
     #     --config "config-maps.argocd-cmd-params-cm.data.application\.namespaces=namespace1,namespace2"
 
-    # - name: Create ArgoCD config
-    #   run: |
-    #     kubectl get namespace argocd || kubectl create namespace argocd
+    - name: Create ArgoCD config
+      run: |
+        kubectl get namespace argocd || kubectl create namespace argocd
 
-    #     if ! kubectl get deployment argocd-server -n argocd > /dev/null 2>&1; then
-    #       kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-    #     else
-    #       echo "Argo CD already installed. Skipping apply."
-    #     fi
+        if ! kubectl get deployment argocd-server -n argocd > /dev/null 2>&1; then
+          kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+        else
+          echo "Argo CD already installed. Skipping apply."
+        fi
 
-    #     kubectl -n argocd expose service argocd-server --type LoadBalancer --name argocd-server-lb --port 80 --target-port 8080
+        kubectl -n argocd expose service argocd-server --type LoadBalancer --name argocd-server-lb --port 80 --target-port 8080
