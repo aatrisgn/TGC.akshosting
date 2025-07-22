@@ -1,5 +1,5 @@
 resource "azuread_application" "argocd_ui_appreg" {
-  display_name = lower("tgc-akshosting-argocdui-${each.key}-auth")
+  display_name = lower("tgc-akshosting-argocdui-auth")
 }
 
 resource "azuread_service_principal" "product_environment_spns" {
