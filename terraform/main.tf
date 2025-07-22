@@ -1,6 +1,19 @@
+resource "azuread_application" "argocd_ui_appreg" {
+  display_name = lower("tgc-akshosting-argocdui-${each.key}-auth")
+}
+
+resource "azuread_service_principal" "product_environment_spns" {
+  client_id = azuread_application.argocd_ui_appreg.client_id
+}
 
 resource "azurerm_user_assigned_identity" "aks_identity" {
   name                = "ui-akshosting-${var.environment_type_name}-${local.resource_location_name}"
+  resource_group_name = data.azurerm_resource_group.default_resource_group.name
+  location            = data.azurerm_resource_group.default_resource_group.location
+}
+
+resource "azurerm_user_assigned_identity" "argocd_workload_identity" {
+  name                = "ui-argowi-${var.environment_type_name}-${local.resource_location_name}"
   resource_group_name = data.azurerm_resource_group.default_resource_group.name
   location            = data.azurerm_resource_group.default_resource_group.location
 }

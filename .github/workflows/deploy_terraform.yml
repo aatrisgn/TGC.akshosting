@@ -124,8 +124,8 @@ jobs:
         --release-train preview \
         --version 0.0.7-preview \
         --config deployWithHightAvailability=false \
-        --config namespaceInstall=false \
-        --config "config-maps.argocd-cmd-params-cm.data.application\.namespaces=namespace1,namespace2"
+        --config namespaceInstall=false
+    #     --config "config-maps.argocd-cmd-params-cm.data.application\.namespaces=namespace1,namespace2"
 
     # - name: Create ArgoCD config
     #   run: |
@@ -137,4 +137,4 @@ jobs:
     #       echo "Argo CD already installed. Skipping apply."
     #     fi
 
-    #     kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+    #     kubectl -n argocd expose service argocd-server --type LoadBalancer --name argocd-server-lb --port 80 --target-port 8080
