@@ -104,6 +104,29 @@ jobs:
         resource-group: '${{ needs.deploy_aks.outputs.AKS_RESOURCE_GROUP_NAME  }}' 
         cluster-name: '${{ needs.deploy_aks.outputs.AKS_CLUSER_NAME }}'
 
+    - name: Install AKS extension
+      run: |
+        az aks install-cli
+
+        az extension add -n k8s-configuration
+        az extension add -n k8s-extension
+
+        az extension update -n k8s-configuration
+        az extension update -n k8s-extension
+
+    - name: Configure AKS for ArgoCD
+      run: |
+        az k8s-extension create --resource-group ${{ needs.deploy_aks.outputs.AKS_RESOURCE_GROUP_NAME  }} --cluster-name ${{ needs.deploy_aks.outputs.AKS_CLUSER_NAME }} \
+        --cluster-type managedClusters \
+        --name argocd \
+        --extension-type Microsoft.ArgoCD \
+        --auto-upgrade false \
+        --release-train preview \
+        --version 0.0.7-preview \
+        --config deployWithHightAvailability=false \
+        --config namespaceInstall=false \
+        --config "config-maps.argocd-cmd-params-cm.data.application\.namespaces=namespace1,namespace2"
+
     # - name: Create ArgoCD config
     #   run: |
     #     kubectl get namespace argocd || kubectl create namespace argocd
