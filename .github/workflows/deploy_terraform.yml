@@ -54,7 +54,7 @@ jobs:
 
     - name: Terraform Plan
       id: plan
-      run: terraform plan -input=false -var-file="envs/dev.tfvars" -out=tfplan
+      run: terraform plan -input=false -var-file="envs/dev.tfvars" -var=tenant_id=${{ secrets.AKSHOSTING_DEV_TENANT_ID }} -out=tfplan
 
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan
