@@ -6,9 +6,7 @@ resource "azurerm_user_assigned_identity" "aks_identity" {
 
 #TODO:
 #Update app reg accordingly to Entra
-#Create ARgoCD ad group
 #Enable logging
-#Create public IP address for ArgoCD
 #Fix DNS domain for it
 resource "azurerm_kubernetes_cluster" "aks_cluster" {
   name                      = "aks-akshosting-${var.environment_type_name}-${local.resource_location_name}"
@@ -35,15 +33,9 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     log_analytics_workspace_id = data.azurerm_log_analytics_workspace.shared_log_analytic_workspace.id
   }
 
-
   key_vault_secrets_provider {
     secret_rotation_enabled = true
   }
-
-  # web_app_routing {
-  #   dns_zone_ids = []
-  #   default_nginx_controller = "AnnotationControlled"
-  # }
 
   network_profile {
     network_plugin = "azure"
