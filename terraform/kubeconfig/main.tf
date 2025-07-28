@@ -53,3 +53,42 @@ resource "null_resource" "apply_manifest" {
     EOF
   }
 }
+
+resource "kubernetes_service" "argocd_loadbalancer" {
+  metadata {
+    name = "argocd-server-lb"
+    namespace = kubernetes_namespace.argocd_namespace.metadata.0.name
+    annotations = {
+      "service.beta.kubernetes.io/azure-pip-name" = azurerm_public_ip.aks_public_ip.name
+    }
+  }
+  spec {
+    port {
+      port        = 80
+      target_port = 8080
+      protocol = "TCP"
+    }
+    port {
+      port        = 443
+      target_port = 8080
+      protocol = "TCP"
+    }
+    type = "LoadBalancer"
+  }
+}
+
+#kubectl -n argocd expose service argocd-server --type LoadBalancer --name argocd-server-lb --port 80,443 --target-port 8080
+
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   annotations:
+#     service.beta.kubernetes.io/azure-load-balancer-resource-group: <node resource group name>
+#     service.beta.kubernetes.io/azure-pip-name: myAKSPublicIP
+#   name: azure-load-balancer
+# spec:
+#   type: LoadBalancer
+#   ports:
+#   - port: 80
+#   selector:
+#     app: azure-load-balancer
