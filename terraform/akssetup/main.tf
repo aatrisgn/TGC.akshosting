@@ -15,7 +15,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   dns_prefix                = "aks-akshosting-${var.environment_type_name}"
   oidc_issuer_enabled       = true
   workload_identity_enabled = true
-  node_resource_group       = data.azurerm_resource_group.default_resource_group.name
+  node_resource_group       = "rg-akshosting-dynamic-${var.environment_type_name}-west-europe"
 
   default_node_pool {
     name            = "default"
