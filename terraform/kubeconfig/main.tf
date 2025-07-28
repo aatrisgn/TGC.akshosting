@@ -64,11 +64,13 @@ resource "kubernetes_service" "argocd_loadbalancer" {
   }
   spec {
     port {
+      name = "http"
       port        = 80
       target_port = 8080
       protocol = "TCP"
     }
     port {
+      name = "https"
       port        = 443
       target_port = 8080
       protocol = "TCP"
