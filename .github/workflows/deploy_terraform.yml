@@ -76,12 +76,12 @@ jobs:
     environment: dev
     needs: deploy_aks
     
-    # env:
-    #   ARM_CLIENT_ID: "${{ secrets.AKSHOSTING_DEV_CLIENT_ID }}"
-    #   ARM_SUBSCRIPTION_ID: "${{ secrets.AKSHOSTING_DEV_SUBSCRIPTION_ID }}"
-    #   ARM_TENANT_ID: "${{ secrets.AKSHOSTING_DEV_TENANT_ID }}"
-    #   ARM_USE_AZUREAD: true
-    #   ENVIRONMENT_NAME: dev
+    env:
+      ARM_CLIENT_ID: "${{ secrets.AKSHOSTING_DEV_CLIENT_ID }}"
+      ARM_SUBSCRIPTION_ID: "${{ secrets.AKSHOSTING_DEV_SUBSCRIPTION_ID }}"
+      ARM_TENANT_ID: "${{ secrets.AKSHOSTING_DEV_TENANT_ID }}"
+      ARM_USE_AZUREAD: true
+      ENVIRONMENT_NAME: dev
 
     steps:
     - uses: actions/checkout@v3

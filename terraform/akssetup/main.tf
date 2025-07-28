@@ -4,12 +4,6 @@ resource "azurerm_user_assigned_identity" "aks_identity" {
   location            = data.azurerm_resource_group.default_resource_group.location
 }
 
-resource "azurerm_user_assigned_identity" "argocd_workload_identity" {
-  name                = "ui-argowi-${var.environment_type_name}-${local.resource_location_name}"
-  resource_group_name = data.azurerm_resource_group.default_resource_group.name
-  location            = data.azurerm_resource_group.default_resource_group.location
-}
-
 #TODO:
 #Update app reg accordingly to Entra
 #Create ARgoCD ad group
@@ -36,6 +30,22 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     type         = "UserAssigned"
     identity_ids = [azurerm_user_assigned_identity.aks_identity.id]
   }
+
+
+  key_vault_secrets_provider {
+    secret_rotation_enabled = true
+  }
+
+  # web_app_routing {
+  #   dns_zone_ids = []
+  #   default_nginx_controller = "AnnotationControlled"
+  # }
+
+  network_profile {
+    network_plugin = "azure"
+    load_balancer_sku = "standard"
+  }
+
 
   tags = {
     environment = "personal"
