@@ -36,56 +36,20 @@ resource "azurerm_public_ip" "aks_public_ip" {
   sku                 = "Standard"
 }
 
-resource "kubernetes_namespace" "test" {
+resource "kubernetes_namespace" "argocd_namespace" {
   metadata {
-    name = "nginx"
+    name = "argocd"
   }
 }
 
-resource "kubernetes_deployment" "test" {
-  metadata {
-    name      = "nginx"
-    namespace = kubernetes_namespace.test.metadata.0.name
-  }
-  spec {
-    replicas = 2
-    selector {
-      match_labels = {
-        app = "MyTestApp"
-      }
-    }
-    template {
-      metadata {
-        labels = {
-          app = "MyTestApp"
-        }
-      }
-      spec {
-        container {
-          image = "nginx"
-          name  = "nginx-container"
-          port {
-            container_port = 80
-          }
-        }
-      }
-    }
-  }
-}
-resource "kubernetes_service" "test" {
-  metadata {
-    name      = "nginx"
-    namespace = kubernetes_namespace.test.metadata.0.name
-  }
-  spec {
-    selector = {
-      app = kubernetes_deployment.test.spec.0.template.0.metadata.0.labels.app
-    }
-    type = "NodePort"
-    port {
-      node_port   = 30201
-      port        = 80
-      target_port = 80
-    }
+resource "null_resource" "apply_manifest" {
+  provisioner "local-exec" {
+    command = <<EOF
+      if ! kubectl get deployment argocd-server -n argocd > /dev/null 2>&1; then
+        kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+      else
+        echo "Argo CD already installed. Skipping apply."
+      fi
+    EOF
   }
 }
