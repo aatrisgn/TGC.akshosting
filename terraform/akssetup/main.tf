@@ -31,6 +31,10 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     identity_ids = [azurerm_user_assigned_identity.aks_identity.id]
   }
 
+  oms_agent {
+    log_analytics_workspace_id = data.azurerm_log_analytics_workspace.shared_log_analytic_workspace.id
+  }
+
 
   key_vault_secrets_provider {
     secret_rotation_enabled = true

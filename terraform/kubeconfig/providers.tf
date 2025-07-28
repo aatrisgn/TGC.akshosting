@@ -7,3 +7,7 @@ provider "azuread" {
   use_oidc  = true
   tenant_id = var.tenant_id
 }
+
+provider "kubernetes" {
+  config_path = "~/.kube/config"
+}

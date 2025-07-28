@@ -75,6 +75,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     needs: deploy_aks
+
+    defaults:
+      run:
+        working-directory: ./terraform/kubeconfig
     
     env:
       ARM_CLIENT_ID: "${{ secrets.AKSHOSTING_DEV_CLIENT_ID }}"
@@ -113,6 +117,24 @@ jobs:
 
         az extension update -n k8s-configuration
         az extension update -n k8s-extension
+    
+        - name: Install Terraform
+        run: bash "${{ github.workspace }}/.github/scripts/install_terraform.sh" 
+  
+    - name: Terraform Init
+      run: |
+        terraform init \
+        -backend-config=resource_group_name="${{ secrets.AKSHOSTING_DEV_TFSTATE_RESOURCE_GROUP_NAME }}" \
+        -backend-config=storage_account_name="${{ secrets.AKSHOSTING_DEV_TFSTATE_STORAGE_ACCOUNT_NAME }}" \
+        -backend-config=container_name="${{ secrets.AKSHOSTING_DEV_TFSTATE_STORAGE_CONTAINER_NAME }}" \
+        -backend-config=key="kubeconfig.${{ env.ENVIRONMENT_NAME }}.tfstate"
+        
+    - name: Terraform Validate
+      run: terraform validate
+
+    - name: Terraform Plan
+      id: plan
+      run: terraform plan -input=false -var-file="envs/dev.tfvars" -var=tenant_id=${{ secrets.AKSHOSTING_DEV_TENANT_ID }} -out=tfplan
 
     # - name: Create ArgoCD config
     #   run: |
