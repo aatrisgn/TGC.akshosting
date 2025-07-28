@@ -23,7 +23,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./terraform
+        working-directory: ./terraform/akssetup
     
     env:
       ARM_CLIENT_ID: "${{ secrets.AKSHOSTING_DEV_CLIENT_ID }}"
@@ -56,8 +56,8 @@ jobs:
       id: plan
       run: terraform plan -input=false -var-file="envs/dev.tfvars" -var=tenant_id=${{ secrets.AKSHOSTING_DEV_TENANT_ID }} -out=tfplan
 
-    - name: Terraform Apply
-      run: terraform apply -auto-approve -json tfplan
+    # - name: Terraform Apply
+    #   run: terraform apply -auto-approve tfplan
     
     - name: Terraform Output
       id: tf_output
@@ -114,27 +114,21 @@ jobs:
         az extension update -n k8s-configuration
         az extension update -n k8s-extension
 
-    # - name: Configure AKS for ArgoCD
+    # - name: Create ArgoCD config
     #   run: |
-    #     az k8s-extension create --resource-group ${{ needs.deploy_aks.outputs.AKS_RESOURCE_GROUP_NAME  }} --cluster-name ${{ needs.deploy_aks.outputs.AKS_CLUSER_NAME }} \
-    #     --cluster-type managedClusters \
-    #     --name argocd \
-    #     --extension-type Microsoft.ArgoCD \
-    #     --auto-upgrade false \
-    #     --release-train preview \
-    #     --version 0.0.7-preview \
-    #     --config deployWithHightAvailability=false \
-    #     --config namespaceInstall=false
-    #     --config "config-maps.argocd-cmd-params-cm.data.application\.namespaces=namespace1,namespace2"
+    #     kubectl get namespace argocd || kubectl create namespace argocd
 
-    - name: Create ArgoCD config
-      run: |
-        kubectl get namespace argocd || kubectl create namespace argocd
+    #     if ! kubectl get deployment argocd-server -n argocd > /dev/null 2>&1; then
+    #       kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+    #     else
+    #       echo "Argo CD already installed. Skipping apply."
+    #     fi
 
-        if ! kubectl get deployment argocd-server -n argocd > /dev/null 2>&1; then
-          kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-        else
-          echo "Argo CD already installed. Skipping apply."
-        fi
+    #     kubectl -n argocd expose service argocd-server --type LoadBalancer --name argocd-server-lb --port 80,443 --target-port 8080
 
-        kubectl -n argocd expose service argocd-server --type LoadBalancer --name argocd-server-lb --port 80 --target-port 8080
+# argocd admin initial-password -n argocd
+#argocd login <ARGOCD_SERVER>
+#argocd account update-password
+#kubectl patch deployment argocd-server -n argocd \
+#   --type='json' \
+#   -p='[{"op": "add", "path": "/spec/template/metadata/labels/azure.workload.identity~1use", "value": "true"}]'
