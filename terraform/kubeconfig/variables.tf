@@ -12,3 +12,7 @@ variable "tenant_id" {
     error_message = "The variable value must be a valid GUID in the format 00000000-0000-0000-0000-000000000000."
   }
 }
+
+variable "aks_host_name" {
+  type = string
+}

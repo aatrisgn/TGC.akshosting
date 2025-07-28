@@ -11,7 +11,7 @@ resource "azuread_service_principal" "product_environment_spns" {
 }
 
 resource "azuread_application_redirect_uris" "example_web" {
-  application_id = azuread_application.argocd_ui_appreg.client_id
+  application_id = azuread_application.argocd_ui_appreg.id
   type           = "Web"
 
   redirect_uris = [
@@ -20,7 +20,7 @@ resource "azuread_application_redirect_uris" "example_web" {
 }
 
 resource "azuread_application_redirect_uris" "example_public" {
-  application_id = azuread_application.argocd_ui_appreg.client_id
+  application_id = azuread_application.argocd_ui_appreg.id
   type           = "PublicClient"
 
   redirect_uris = [

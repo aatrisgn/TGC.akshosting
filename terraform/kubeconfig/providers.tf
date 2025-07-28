@@ -9,5 +9,5 @@ provider "azuread" {
 }
 
 provider "kubernetes" {
-  config_path = "~/.kube/config"
+  //host = var.aks_host_name
 }

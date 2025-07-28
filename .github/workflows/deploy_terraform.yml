@@ -20,6 +20,7 @@ jobs:
     outputs:
       AKS_CLUSER_NAME: ${{ steps.set_outputs.outputs.AKS_CLUSER_NAME }}
       AKS_RESOURCE_GROUP_NAME: ${{ steps.set_outputs.outputs.AKS_RESOURCE_GROUP_NAME }}
+      #AKS_HOST_NAME: ${{ steps.set_outputs.outputs.AKS_RESOURCE_GROUP_NAME }}
 
     defaults:
       run:
