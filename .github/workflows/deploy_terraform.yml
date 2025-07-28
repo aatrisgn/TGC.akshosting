@@ -118,8 +118,8 @@ jobs:
         az extension update -n k8s-configuration
         az extension update -n k8s-extension
     
-        - name: Install Terraform
-        run: bash "${{ github.workspace }}/.github/scripts/install_terraform.sh" 
+    - name: Install Terraform
+      run: bash "${{ github.workspace }}/.github/scripts/install_terraform.sh" 
   
     - name: Terraform Init
       run: |
