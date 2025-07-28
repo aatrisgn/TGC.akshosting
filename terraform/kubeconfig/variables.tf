@@ -13,6 +13,6 @@ variable "tenant_id" {
   }
 }
 
-variable "aks_host_name" {
-  type = string
-}
+# variable "aks_host_name" {
+#   type = string
+# }
