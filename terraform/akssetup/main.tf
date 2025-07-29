@@ -4,6 +4,12 @@ resource "azurerm_user_assigned_identity" "aks_identity" {
   location            = data.azurerm_resource_group.default_resource_group.location
 }
 
+resource "azurerm_role_assignment" "network_contributor" {
+  scope                = data.azurerm_resource_group.default_resource_group.id
+  role_definition_name = "Network Contributor"
+  principal_id         = azurerm_user_assigned_identity.aks_identity.principal_id
+}
+
 #TODO:
 #Update app reg accordingly to Entra
 #Enable logging
