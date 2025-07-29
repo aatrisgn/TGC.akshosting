@@ -61,7 +61,7 @@ resource "kubernetes_service" "nginx_ingress" {
     namespace = "argocd"
     annotations = {
       "service.beta.kubernetes.io/azure-load-balancer-resource-group" = data.azurerm_resource_group.default_resource_group.name
-      "service.beta.kubernetes.io/azure-pip-name" = azurerm_public_ip.nginx_ingress_ip.name
+      "service.beta.kubernetes.io/azure-pip-name" = azurerm_public_ip.aks_public_ip.name
     }
   }
 
