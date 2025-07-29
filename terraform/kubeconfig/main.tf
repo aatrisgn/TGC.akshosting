@@ -71,13 +71,17 @@ resource "kubernetes_service" "nginx_ingress" {
     }
 
     port {
+      name = "http"
       port        = 80
       target_port = 80
+      protocol = "TCP"
     }
 
     port {
+      name = "https"
       port        = 443
       target_port = 443
+      protocol = "TCP"
     }
   }
 }
@@ -89,7 +93,7 @@ resource "kubernetes_ingress_v1" "argocd_ui" {
     namespace = "argocd"
     annotations = {
       "nginx.ingress.kubernetes.io/backend-protocol" = "HTTPS"
-      "nginx.ingress.kubernetes.io/ssl-redirect"     = "true"
+      "nginx.ingress.kubernetes.io/ssl-redgirect"     = "true"
     }
   }
 
