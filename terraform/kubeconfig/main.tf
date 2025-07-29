@@ -82,7 +82,7 @@ resource "kubernetes_service" "argocd_loadbalancer" {
     }
     type = "LoadBalancer"
     selector = {
-      "app" = "azure-load-balancer"
+      "app.kubernetes.io/name" = "argocd-server"
     }
   }
 }
