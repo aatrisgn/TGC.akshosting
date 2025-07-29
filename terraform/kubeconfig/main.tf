@@ -58,6 +58,11 @@ resource "kubernetes_service" "argocd_loadbalancer" {
   metadata {
     name = "argocd-server-lb"
     namespace = kubernetes_namespace.argocd_namespace.metadata.0.name
+    labels = {
+      "app.kubernetes.io/component" = "server"
+      "app.kubernetes.io/name" = "argocd-server"
+      "app.kubernetes.io/part-of" = "argocd"
+    }
     annotations = {
       "service.beta.kubernetes.io/azure-pip-name" = azurerm_public_ip.aks_public_ip.name
     }
@@ -75,6 +80,8 @@ resource "kubernetes_service" "argocd_loadbalancer" {
       target_port = 8080
       protocol = "TCP"
     }
+    cluster_ip = azurerm_public_ip.aks_public_ip.ip_address
+    cluster_ips = [ azurerm_public_ip.aks_public_ip.ip_address ]
     type = "LoadBalancer"
   }
 }
