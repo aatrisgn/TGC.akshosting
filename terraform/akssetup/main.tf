@@ -22,7 +22,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   oidc_issuer_enabled              = true
   workload_identity_enabled        = true
   node_resource_group              = "rg-akshosting-dynamic-${var.environment_type_name}-west-europe"
-  http_application_routing_enabled = true
+  #http_application_routing_enabled = true
 
   default_node_pool {
     name            = "default"
