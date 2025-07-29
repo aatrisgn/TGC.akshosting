@@ -58,7 +58,7 @@ resource "null_resource" "apply_manifest" {
 resource "kubernetes_service" "nginx_ingress" {
   metadata {
     name      = "ingress-nginx-controller"
-    namespace = "ingress-nginx"
+    namespace = "argocd"
   }
 
   spec {
