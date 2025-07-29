@@ -65,4 +65,8 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   tags = {
     environment = "personal"
   }
+
+  lifecycle {
+    ignore_changes = [ web_app_routing ]
+  }
 }

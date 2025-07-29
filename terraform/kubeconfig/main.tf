@@ -55,43 +55,43 @@ resource "null_resource" "apply_manifest" {
 }
 
 
-resource "kubernetes_service" "nginx_ingress" {
-  metadata {
-    name      = "argocd-nginx-controller"
-    namespace = "argocd"
-    annotations = {
-      "service.beta.kubernetes.io/azure-load-balancer-resource-group" = data.azurerm_resource_group.default_resource_group.name
-      "service.beta.kubernetes.io/azure-pip-name"                     = azurerm_public_ip.aks_public_ip.name
-    }
-    labels = {
-      "app.kubernetes.io/component" = "server"
-      "app.kubernetes.io/name" = "argocd-server"
-      "app.kubernetes.io/part-of" = "argocd"
-    }
-  }
+# resource "kubernetes_service" "nginx_ingress" {
+#   metadata {
+#     name      = "argocd-nginx-controller"
+#     namespace = "argocd"
+#     annotations = {
+#       "service.beta.kubernetes.io/azure-load-balancer-resource-group" = data.azurerm_resource_group.default_resource_group.name
+#       "service.beta.kubernetes.io/azure-pip-name"                     = azurerm_public_ip.aks_public_ip.name
+#     }
+#     labels = {
+#       "app.kubernetes.io/component" = "server"
+#       "app.kubernetes.io/name" = "argocd-server"
+#       "app.kubernetes.io/part-of" = "argocd"
+#     }
+#   }
 
-  spec {
-    type = "LoadBalancer"
+#   spec {
+#     type = "LoadBalancer"
 
-    selector = {
-      "app.kubernetes.io/name" = "ingress-nginx"
-    }
+#     selector = {
+#       "app.kubernetes.io/name" = "ingress-nginx"
+#     }
 
-    port {
-      name        = "http"
-      port        = 80
-      target_port = 80
-      protocol    = "TCP"
-    }
+#     port {
+#       name        = "http"
+#       port        = 80
+#       target_port = 80
+#       protocol    = "TCP"
+#     }
 
-    port {
-      name        = "https"
-      port        = 443
-      target_port = 443
-      protocol    = "TCP"
-    }
-  }
-}
+#     port {
+#       name        = "https"
+#       port        = 443
+#       target_port = 443
+#       protocol    = "TCP"
+#     }
+#   }
+# }
 
 resource "kubernetes_ingress_v1" "argocd_ui" {
   metadata {
