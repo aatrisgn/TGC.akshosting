@@ -94,7 +94,6 @@ resource "null_resource" "apply_manifest" {
 # }
 
 resource "kubernetes_ingress" "argocd_ui" {
-  wait_for_load_balancer = true
   metadata {
     name      = "argocd-ui"
     namespace = "argocd"
