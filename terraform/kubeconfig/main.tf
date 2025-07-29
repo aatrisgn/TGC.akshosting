@@ -93,7 +93,8 @@ resource "null_resource" "apply_manifest" {
 #   }
 # }
 
-resource "kubernetes_ingress_v1" "argocd_ui" {
+resource "kubernetes_ingress" "argocd_ui" {
+  wait_for_load_balancer = true
   metadata {
     name      = "argocd-ui"
     namespace = "argocd"
@@ -101,28 +102,19 @@ resource "kubernetes_ingress_v1" "argocd_ui" {
       "nginx.ingress.kubernetes.io/backend-protocol"   = "HTTPS"
       "nginx.ingress.kubernetes.io/ssl-redirect"       = "true"
       "nginx.ingress.kubernetes.io/force-ssl-redirect" = "true"
-      //"kubernetes.azure.com/tls-cert-keyvault-uri" = "https://tetetate.vault.azure.net/certificates/adqqqq"
     }
   }
 
   spec {
     ingress_class_name = "nginx"
-
     rule {
       host = "argo.dev.tgcportal.com"
-
       http {
         path {
-          path      = "/"
-          path_type = "Prefix"
-
+          path      = "/*"
           backend {
-            service {
-              name = "argocd-server"
-              port {
-                number = 8080
-              }
-            }
+            service_name = "argocd-server"
+            service_port = 443
           }
         }
       }
@@ -134,6 +126,34 @@ resource "kubernetes_ingress_v1" "argocd_ui" {
     }
   }
 }
+
+
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: argocd-ui
+#   namespace: argocd
+#   annotations:
+#     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+#     nginx.ingress.kubernetes.io/ssl-redirect: "true"
+#     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+# spec:
+#   ingressClassName: nginx
+#   tls:
+#     - hosts:
+#         - argo.dev.tgcportal.com
+#       secretName: argocd-tls  # Or use Azure Key Vault CSI driver
+#   rules:
+#     - host: argo.dev.tgcportal.com
+#       http:
+#         paths:
+#           - path: /
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: argocd-server
+#                 port:
+#                   number: 443
 
 
 # resource "kubernetes_service" "argocd_loadbalancer" {
