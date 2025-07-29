@@ -93,7 +93,7 @@ resource "null_resource" "apply_manifest" {
 #   }
 # }
 
-resource "kubernetes_ingress" "argocd_ui" {
+resource "kubernetes_ingress_v1" "argocd_ui" {
   metadata {
     name      = "argocd-ui"
     namespace = "argocd"
@@ -112,8 +112,12 @@ resource "kubernetes_ingress" "argocd_ui" {
         path {
           path      = "/*"
           backend {
-            service_name = "argocd-server"
-            service_port = 443
+            service {
+              name = "argocd-server"
+              port {
+                number = 443
+              }
+            }
           }
         }
       }
