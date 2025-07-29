@@ -57,14 +57,16 @@ resource "null_resource" "apply_manifest" {
 
 resource "kubernetes_service" "nginx_ingress" {
   metadata {
-    name      = "ingress-nginx-controller"
+    name      = "argocd-nginx-controller"
     namespace = "argocd"
+    annotations = {
+      "service.beta.kubernetes.io/azure-load-balancer-resource-group" = data.azurerm_resource_group.default_resource_group.name
+      "service.beta.kubernetes.io/azure-pip-name" = azurerm_public_ip.nginx_ingress_ip.name
+    }
   }
 
   spec {
     type = "LoadBalancer"
-
-    load_balancer_ip = azurerm_public_ip.aks_public_ip.ip_address
 
     selector = {
       "app.kubernetes.io/name" = "ingress-nginx"
