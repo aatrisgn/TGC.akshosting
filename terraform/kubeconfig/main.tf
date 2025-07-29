@@ -101,6 +101,7 @@ resource "kubernetes_ingress_v1" "argocd_ui" {
       "nginx.ingress.kubernetes.io/backend-protocol"   = "HTTPS"
       "nginx.ingress.kubernetes.io/ssl-redirect"       = "true"
       "nginx.ingress.kubernetes.io/force-ssl-redirect" = "true"
+      "kubernetes.azure.com/tls-cert-keyvault-uri" = "https://tetetate.vault.azure.net/certificates/adqqqq"
     }
   }
 
@@ -129,7 +130,7 @@ resource "kubernetes_ingress_v1" "argocd_ui" {
 
     tls {
       hosts       = ["argo.dev.tgcportal.com"]
-      secret_name = "argocd-tls"
+      secret_name = "keyvault-ssdwdqwd"
     }
   }
 }
