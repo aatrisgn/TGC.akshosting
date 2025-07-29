@@ -15,13 +15,14 @@ resource "azurerm_role_assignment" "network_contributor" {
 #Enable logging
 #Fix DNS domain for it
 resource "azurerm_kubernetes_cluster" "aks_cluster" {
-  name                      = "aks-akshosting-${var.environment_type_name}-${local.resource_location_name}"
-  location                  = data.azurerm_resource_group.default_resource_group.location
-  resource_group_name       = data.azurerm_resource_group.default_resource_group.name
-  dns_prefix                = "aks-akshosting-${var.environment_type_name}"
-  oidc_issuer_enabled       = true
-  workload_identity_enabled = true
-  node_resource_group       = "rg-akshosting-dynamic-${var.environment_type_name}-west-europe"
+  name                             = "aks-akshosting-${var.environment_type_name}-${local.resource_location_name}"
+  location                         = data.azurerm_resource_group.default_resource_group.location
+  resource_group_name              = data.azurerm_resource_group.default_resource_group.name
+  dns_prefix                       = "aks-akshosting-${var.environment_type_name}"
+  oidc_issuer_enabled              = true
+  workload_identity_enabled        = true
+  node_resource_group              = "rg-akshosting-dynamic-${var.environment_type_name}-west-europe"
+  http_application_routing_enabled = true
 
   default_node_pool {
     name            = "default"
@@ -44,7 +45,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   }
 
   network_profile {
-    network_plugin = "azure"
+    network_plugin    = "azure"
     load_balancer_sku = "standard"
   }
 

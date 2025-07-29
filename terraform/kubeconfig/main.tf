@@ -61,7 +61,7 @@ resource "kubernetes_service" "nginx_ingress" {
     namespace = "argocd"
     annotations = {
       "service.beta.kubernetes.io/azure-load-balancer-resource-group" = data.azurerm_resource_group.default_resource_group.name
-      "service.beta.kubernetes.io/azure-pip-name" = azurerm_public_ip.aks_public_ip.name
+      "service.beta.kubernetes.io/azure-pip-name"                     = azurerm_public_ip.aks_public_ip.name
     }
   }
 
@@ -69,21 +69,21 @@ resource "kubernetes_service" "nginx_ingress" {
     type = "LoadBalancer"
 
     selector = {
-      "app" = "azure-load-balancer"
+      "app.kubernetes.io/name" = "ingress-nginx"
     }
 
     port {
-      name = "http"
+      name        = "http"
       port        = 80
       target_port = 80
-      protocol = "TCP"
+      protocol    = "TCP"
     }
 
     port {
-      name = "https"
+      name        = "https"
       port        = 443
       target_port = 443
-      protocol = "TCP"
+      protocol    = "TCP"
     }
   }
 }
@@ -93,8 +93,9 @@ resource "kubernetes_ingress_v1" "argocd_ui" {
     name      = "argocd-ui"
     namespace = "argocd"
     annotations = {
-      "nginx.ingress.kubernetes.io/backend-protocol" = "HTTPS"
-      "nginx.ingress.kubernetes.io/ssl-redgirect"     = "true"
+      "nginx.ingress.kubernetes.io/backend-protocol"   = "HTTPS"
+      "nginx.ingress.kubernetes.io/ssl-redirect"       = "true"
+      "nginx.ingress.kubernetes.io/force-ssl-redirect" = "true"
     }
   }
 
@@ -106,14 +107,14 @@ resource "kubernetes_ingress_v1" "argocd_ui" {
 
       http {
         path {
-          path     = "/"
+          path      = "/"
           path_type = "Prefix"
 
           backend {
             service {
               name = "argocd-server"
               port {
-                number = 8080
+                number = 443
               }
             }
           }
@@ -122,7 +123,7 @@ resource "kubernetes_ingress_v1" "argocd_ui" {
     }
 
     tls {
-      hosts      = ["argo.dev.tgcportal.com"]
+      hosts       = ["argo.dev.tgcportal.com"]
       secret_name = "argocd-tls"
     }
   }
