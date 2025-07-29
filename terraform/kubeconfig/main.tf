@@ -55,6 +55,34 @@ resource "null_resource" "apply_manifest" {
 }
 
 
+resource "kubernetes_service" "nginx_ingress" {
+  metadata {
+    name      = "ingress-nginx-controller"
+    namespace = "ingress-nginx"
+  }
+
+  spec {
+    type = "LoadBalancer"
+
+    load_balancer_ip = azurerm_public_ip.aks_public_ip.ip_address
+
+    selector = {
+      app.kubernetes.io/name = "ingress-nginx"
+    }
+
+    port {
+      port        = 80
+      target_port = 80
+    }
+
+    port {
+      port        = 443
+      target_port = 443
+    }
+  }
+}
+
+
 resource "kubernetes_ingress_v1" "argocd_ui" {
   metadata {
     name      = "argocd-ui"
