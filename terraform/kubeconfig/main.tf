@@ -130,7 +130,7 @@ resource "kubernetes_ingress_v1" "argocd_ui" {
 
     tls {
       hosts       = ["argo.dev.tgcportal.com"]
-      secret_name = "ingress-nginx/keyvault-ssdwdqwd"
+      secret_name = "keyvault-qdqwcqwc"
     }
   }
 }
