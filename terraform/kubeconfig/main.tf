@@ -80,9 +80,10 @@ resource "kubernetes_service" "argocd_loadbalancer" {
       target_port = 8080
       protocol = "TCP"
     }
-    cluster_ip = azurerm_public_ip.aks_public_ip.ip_address
-    cluster_ips = [ azurerm_public_ip.aks_public_ip.ip_address ]
     type = "LoadBalancer"
+    selector = {
+      "app" = "azure-load-balancer"
+    }
   }
 }
 
