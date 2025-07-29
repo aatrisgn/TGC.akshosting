@@ -69,7 +69,7 @@ resource "kubernetes_service" "nginx_ingress" {
     type = "LoadBalancer"
 
     selector = {
-      "app.kubernetes.io/name" = "ingress-nginx"
+      "app" = "azure-load-balancer"
     }
 
     port {
@@ -87,7 +87,6 @@ resource "kubernetes_service" "nginx_ingress" {
     }
   }
 }
-
 
 resource "kubernetes_ingress_v1" "argocd_ui" {
   metadata {
