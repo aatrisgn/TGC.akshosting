@@ -67,7 +67,7 @@ resource "kubernetes_service" "nginx_ingress" {
     load_balancer_ip = azurerm_public_ip.aks_public_ip.ip_address
 
     selector = {
-      app.kubernetes.io/name = "ingress-nginx"
+      "app.kubernetes.io/name" = "ingress-nginx"
     }
 
     port {
