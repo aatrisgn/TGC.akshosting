@@ -101,7 +101,7 @@ resource "kubernetes_service" "nginx_ingress" {
   }
 }
 
-resource "kubernetes_service" "nginx_ingress_2" {
+resource "kubernetes_service" "nginx_ingress_2g" {
   metadata {
     name      = "argocd-server-lb-ingress"
     namespace = "argocd"
@@ -151,7 +151,7 @@ resource "kubernetes_ingress_v1" "argocd_ui" {
   }
 
   spec {
-    ingress_class_name = "nginx"
+    ingress_class_name = "argocd-server-lb-ingress"
     rule {
       host = "argo.dev.tgcportal.com"
       http {
