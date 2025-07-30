@@ -101,7 +101,7 @@ resource "kubernetes_service" "nginx_ingress" {
   }
 }
 
-resource "kubernetes_service" "nginx_ingress_2g" {
+resource "kubernetes_service" "nginx_ingress_2" {
   metadata {
     name      = "argocd-server-lb-ingress"
     namespace = "argocd"
