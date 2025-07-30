@@ -13,6 +13,28 @@ permissions:
   pull-requests: write
 
 jobs:
+  configure_acr:
+    name: Deploy webapp to dev ACR
+    runs-on: ubuntu-latest
+    environment: dev
+
+    env:
+      acr_registry: tgclzdevacr.azurecr.io
+
+    steps:
+    - uses: actions/checkout@v3
+    - run: |
+        docker --version    
+    - name: 'Az CLI login'
+      uses: azure/login@v2
+      with:
+          client-id: ${{ secrets.STREETCROQUETDK_DEV_CLIENT_ID }}
+          tenant-id: ${{ secrets.STREETCROQUETDK_DEV_TENANT_ID }}
+          subscription-id: ${{ secrets.STREETCROQUETDK_DEV_SUBSCRIPTION_ID }}
+    
+    - run: bash "${{ github.workspace }}/.github/scripts/import_nginx_ingress.sh" 
+      name: "Build and publish webapp to ACR"
+
   deploy_aks:
     runs-on: ubuntu-latest
     environment: dev
