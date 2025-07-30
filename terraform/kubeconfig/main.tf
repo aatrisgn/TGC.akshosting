@@ -251,11 +251,24 @@ resource "kubernetes_ingress_v1" "hello_world_ingress" {
             service {
               name = "argocd-server"
               port {
-                number = 80
+                number = 8080
               }
             }
           }
         }
+        # path {
+        #   path      = "/"
+        #   path_type = "Prefix"
+
+        #   backend {
+        #     service {
+        #       name = "argocd-server"
+        #       port {
+        #         number = 443
+        #       }
+        #     }
+        #   }
+        # }
       }
     }
   }
