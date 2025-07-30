@@ -110,7 +110,8 @@ resource "kubernetes_ingress_v1" "argocd_ui" {
       host = "argo.dev.tgcportal.com"
       http {
         path {
-          path      = "/*"
+          path      = "/"
+          path_type = "Prefix"
           backend {
             service {
               name = "argocd-server"
@@ -159,38 +160,38 @@ resource "kubernetes_ingress_v1" "argocd_ui" {
 #                   number: 443
 
 
-# resource "kubernetes_service" "argocd_loadbalancer" {
-#   metadata {
-#     name = "argocd-server-lb"
-#     namespace = kubernetes_namespace.argocd_namespace.metadata.0.name
-#     labels = {
-#       "app.kubernetes.io/component" = "server"
-#       "app.kubernetes.io/name" = "argocd-server"
-#       "app.kubernetes.io/part-of" = "argocd"
-#     }
-#     annotations = {
-#       "service.beta.kubernetes.io/azure-pip-name" = azurerm_public_ip.aks_public_ip.name
-#     }
-#   }
-#   spec {
-#     port {
-#       name = "http"
-#       port        = 80
-#       target_port = 8080
-#       protocol = "TCP"
-#     }
-#     port {
-#       name = "https"
-#       port        = 443
-#       target_port = 8080
-#       protocol = "TCP"
-#     }
-#     type = "LoadBalancer"
-#     selector = {
-#       "app.kubernetes.io/name" = "argocd-server"
-#     }
-#   }
-# }
+resource "kubernetes_service" "argocd_loadbalancer" {
+  metadata {
+    name = "argocd-server-lb"
+    namespace = kubernetes_namespace.argocd_namespace.metadata.0.name
+    labels = {
+      "app.kubernetes.io/component" = "server"
+      "app.kubernetes.io/name" = "argocd-server"
+      "app.kubernetes.io/part-of" = "argocd"
+    }
+    annotations = {
+      "service.beta.kubernetes.io/azure-pip-name" = azurerm_public_ip.aks_public_ip.name
+    }
+  }
+  spec {
+    port {
+      name = "http"
+      port        = 80
+      target_port = 8080
+      protocol = "TCP"
+    }
+    port {
+      name = "https"
+      port        = 443
+      target_port = 8080
+      protocol = "TCP"
+    }
+    type = "LoadBalancer"
+    selector = {
+      "app.kubernetes.io/name" = "argocd-server"
+    }
+  }
+}
 
 #kubectl -n argocd expose service argocd-server --type LoadBalancer --name argocd-server-lb --port 80,443 --target-port 8080
 
