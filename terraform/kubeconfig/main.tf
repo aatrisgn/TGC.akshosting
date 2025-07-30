@@ -63,119 +63,119 @@ resource "null_resource" "apply_manifest" {
 }
 
 
-resource "kubernetes_service" "nginx_ingress" {
-  metadata {
-    name      = "argocd-server-lb"
-    namespace = "argocd"
-    annotations = {
-      "service.beta.kubernetes.io/azure-load-balancer-resource-group" = data.azurerm_resource_group.default_resource_group.name
-      "service.beta.kubernetes.io/azure-pip-name"                     = azurerm_public_ip.aks_public_ip.name
-    }
-    labels = {
-      "app.kubernetes.io/component" = "server"
-      "app.kubernetes.io/name" = "argocd-server"
-      "app.kubernetes.io/part-of" = "argocd"
-    }
-  }
+# resource "kubernetes_service" "nginx_ingress" {
+#   metadata {
+#     name      = "argocd-server-lb"
+#     namespace = "argocd"
+#     annotations = {
+#       "service.beta.kubernetes.io/azure-load-balancer-resource-group" = data.azurerm_resource_group.default_resource_group.name
+#       "service.beta.kubernetes.io/azure-pip-name"                     = azurerm_public_ip.aks_public_ip.name
+#     }
+#     labels = {
+#       "app.kubernetes.io/component" = "server"
+#       "app.kubernetes.io/name" = "argocd-server"
+#       "app.kubernetes.io/part-of" = "argocd"
+#     }
+#   }
 
-  spec {
-    type = "LoadBalancer"
+#   spec {
+#     type = "LoadBalancer"
 
-    selector = {
-      "app.kubernetes.io/name" = "argocd-server"
-    }
+#     selector = {
+#       "app.kubernetes.io/name" = "argocd-server"
+#     }
 
-    port {
-      name        = "http"
-      port        = 80
-      target_port = 8080
-      protocol    = "TCP"
-    }
+#     port {
+#       name        = "http"
+#       port        = 80
+#       target_port = 8080
+#       protocol    = "TCP"
+#     }
 
-    port {
-      name        = "https"
-      port        = 443
-      target_port = 8080
-      protocol    = "TCP"
-    }
-  }
-}
+#     port {
+#       name        = "https"
+#       port        = 443
+#       target_port = 8080
+#       protocol    = "TCP"
+#     }
+#   }
+# }
 
-resource "kubernetes_service" "nginx_ingress_2" {
-  metadata {
-    name      = "argocd-server-lb-ingress"
-    namespace = "argocd"
-    annotations = {
-      "service.beta.kubernetes.io/azure-load-balancer-resource-group" = data.azurerm_resource_group.default_resource_group.name
-      "service.beta.kubernetes.io/azure-pip-name"                     = azurerm_public_ip.aks_public_ip_02.name
-    }
-    labels = {
-      "app.kubernetes.io/component" = "server"
-      "app.kubernetes.io/name" = "argocd-server"
-      "app.kubernetes.io/part-of" = "argocd"
-    }
-  }
+# resource "kubernetes_service" "nginx_ingress_2" {
+#   metadata {
+#     name      = "argocd-server-lb-ingress"
+#     namespace = "argocd"
+#     annotations = {
+#       "service.beta.kubernetes.io/azure-load-balancer-resource-group" = data.azurerm_resource_group.default_resource_group.name
+#       "service.beta.kubernetes.io/azure-pip-name"                     = azurerm_public_ip.aks_public_ip_02.name
+#     }
+#     labels = {
+#       "app.kubernetes.io/component" = "server"
+#       "app.kubernetes.io/name" = "argocd-server"
+#       "app.kubernetes.io/part-of" = "argocd"
+#     }
+#   }
 
-  spec {
-    type = "LoadBalancer"
+#   spec {
+#     type = "LoadBalancer"
 
-    selector = {
-      "app.kubernetes.io/name" = "argocd-ui"
-    }
+#     selector = {
+#       "app.kubernetes.io/name" = "argocd-ui"
+#     }
 
-    port {
-      name        = "http"
-      port        = 80
-      target_port = 80
-      protocol    = "TCP"
-    }
+#     port {
+#       name        = "http"
+#       port        = 80
+#       target_port = 80
+#       protocol    = "TCP"
+#     }
 
-    port {
-      name        = "https"
-      port        = 443
-      target_port = 443
-      protocol    = "TCP"
-    } 
-  }
-}
+#     port {
+#       name        = "https"
+#       port        = 443
+#       target_port = 443
+#       protocol    = "TCP"
+#     } 
+#   }
+# }
 
-resource "kubernetes_ingress_v1" "argocd_ui" {
-  metadata {
-    name      = "argocd-ui"
-    namespace = "argocd"
-    annotations = {
-      "nginx.ingress.kubernetes.io/backend-protocol"   = "HTTPS"
-      "nginx.ingress.kubernetes.io/ssl-redirect"       = "true"
-      "nginx.ingress.kubernetes.io/force-ssl-redirect" = "true"
-    }
-  }
+# resource "kubernetes_ingress_v1" "argocd_ui" {
+#   metadata {
+#     name      = "argocd-ui"
+#     namespace = "argocd"
+#     annotations = {
+#       "nginx.ingress.kubernetes.io/backend-protocol"   = "HTTPS"
+#       "nginx.ingress.kubernetes.io/ssl-redirect"       = "true"
+#       "nginx.ingress.kubernetes.io/force-ssl-redirect" = "true"
+#     }
+#   }
 
-  spec {
-    ingress_class_name = "argocd-server-lb-ingress"
-    rule {
-      host = "argo.dev.tgcportal.com"
-      http {
-        path {
-          path      = "/"
-          path_type = "Prefix"
-          backend {
-            service {
-              name = "argocd-server"
-              port {
-                number = 443
-              }
-            }
-          }
-        }
-      }
-    }
+#   spec {
+#     ingress_class_name = "nginx"
+#     rule {
+#       host = "argo.dev.tgcportal.com"
+#       http {
+#         path {
+#           path      = "/"
+#           path_type = "Prefix"
+#           backend {
+#             service {
+#               name = "argocd-server"
+#               port {
+#                 number = 443
+#               }
+#             }
+#           }
+#         }
+#       }
+#     }
 
-    tls {
-      hosts       = ["argo.dev.tgcportal.com"]
-      secret_name = "argocd-2-tls"
-    }
-  }
-}
+#     tls {
+#       hosts       = ["argo.dev.tgcportal.com"]
+#       secret_name = "argocd-2-tls"
+#     }
+#   }
+# }
 
 
 # apiVersion: networking.k8s.io/v1
