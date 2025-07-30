@@ -143,14 +143,6 @@ resource "helm_release" "ingress_nginx" {
     {
       name  = "defaultBackend.image.digest"
       value = ""
-    },
-    {
-      name = "controller.service.loadBalancerIP"
-      value = azurerm_public_ip.aks_public_ip.ip_address
-    },
-    {
-      name = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-load-balancer-internal"
-      value = "true"
     }
   ]
 }
