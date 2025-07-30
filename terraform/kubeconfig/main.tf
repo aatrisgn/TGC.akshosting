@@ -101,7 +101,7 @@ resource "kubernetes_service" "nginx_ingress" {
   }
 }
 
-resource "kubernetes_service" "nginx_ingress" {
+resource "kubernetes_service" "nginx_ingress_2" {
   metadata {
     name      = "argocd-server-lb-ingress"
     namespace = "argocd"
@@ -135,7 +135,7 @@ resource "kubernetes_service" "nginx_ingress" {
       port        = 443
       target_port = 443
       protocol    = "TCP"
-    }
+    } 
   }
 }
 
