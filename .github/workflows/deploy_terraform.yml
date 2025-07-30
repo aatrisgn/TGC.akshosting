@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   configure_acr:
-    name: Deploy webapp to dev ACR
+    name: Import nginx ingress into ACR
     runs-on: ubuntu-latest
     environment: dev
 
@@ -28,9 +28,9 @@ jobs:
     - name: 'Az CLI login'
       uses: azure/login@v2
       with:
-          client-id: ${{ secrets.STREETCROQUETDK_DEV_CLIENT_ID }}
-          tenant-id: ${{ secrets.STREETCROQUETDK_DEV_TENANT_ID }}
-          subscription-id: ${{ secrets.STREETCROQUETDK_DEV_SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.AKSHOSTING_DEV_CLIENT_ID }}
+          tenant-id: ${{ secrets.AKSHOSTING_DEV_TENANT_ID }}
+          subscription-id: ${{ secrets.AKSHOSTING_DEV_SUBSCRIPTION_ID }}
     
     - run: bash "${{ github.workspace }}/.github/scripts/import_nginx_ingress.sh" 
       name: "Build and publish webapp to ACR"
