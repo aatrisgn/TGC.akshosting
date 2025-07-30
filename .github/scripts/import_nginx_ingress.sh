@@ -7,6 +7,8 @@ PATCH_TAG=v20230407
 DEFAULTBACKEND_IMAGE=defaultbackend-amd64
 DEFAULTBACKEND_TAG=1.5
 
+az acr login --name $1
+
 if ! az acr check-name -n $CONTROLLER_IMAGE:$CONTROLLER_TAG; then
     echo "importing $CONTROLLER_IMAGE:$CONTROLLER_TAG ..."
     az acr import --name $REGISTRY_NAME --source $SOURCE_REGISTRY/$CONTROLLER_IMAGE:$CONTROLLER_TAG --image $CONTROLLER_IMAGE:$CONTROLLER_TAG
