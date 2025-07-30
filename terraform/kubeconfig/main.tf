@@ -217,8 +217,6 @@ resource "kubernetes_ingress_v1" "hello_world_ingress" {
     name = "shared-ingress"
     annotations = {
       "nginx.ingress.kubernetes.io/ssl-redirect"  = "false"
-      "nginx.ingress.kubernetes.io/use-regex"     = "true"
-      "nginx.ingress.kubernetes.io/rewrite-target" = "/$2"
     }
   }
 
@@ -227,7 +225,7 @@ resource "kubernetes_ingress_v1" "hello_world_ingress" {
     rule {
       http {
         path {
-          path      = "/(.*)"
+          path      = "/"
           path_type = "Prefix"
 
           backend {
