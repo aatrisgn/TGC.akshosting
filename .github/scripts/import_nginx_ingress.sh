@@ -7,11 +7,17 @@ PATCH_TAG=v20230407
 DEFAULTBACKEND_IMAGE=defaultbackend-amd64
 DEFAULTBACKEND_TAG=1.5
 
-az acr login --name $1
+az acr login --name $REGISTRY_NAME
 
-if ! az acr check-name -n $CONTROLLER_IMAGE:$CONTROLLER_TAG; then
+TAG_EXISTS=$(az acr repository show-tags \
+      --name $REGISTRY_NAME \
+      --repository $CONTROLLER_IMAGE \
+      --query "[?@=='$CONTROLLER_TAG']" \
+      --output tsv)
+
+if [ -z "$TAG_EXISTS" ]; then
     echo "importing $CONTROLLER_IMAGE:$CONTROLLER_TAG ..."
-    az acr import --name $REGISTRY_NAME --source $SOURCE_REGISTRY/$CONTROLLER_IMAGE:$CONTROLLER_TAG --image $CONTROLLER_IMAGE:$CONTROLLER_TAG
+    az acr import --force --name $REGISTRY_NAME --source $SOURCE_REGISTRY/$CONTROLLER_IMAGE:$CONTROLLER_TAG --image $CONTROLLER_IMAGE:$CONTROLLER_TAG
     echo "imported $CONTROLLER_IMAGE:$CONTROLLER_TAG !"
 else
     echo "$CONTROLLER_IMAGE:$CONTROLLER_TAG already imported. Skipping apply."
