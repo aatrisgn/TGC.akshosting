@@ -196,6 +196,7 @@ resource "kubernetes_deployment" "aks_helloworld_one" {
 resource "kubernetes_service" "aks_helloworld_one" {
   metadata {
     name = "aks-streetcroquet"
+    namespace = "streetcroquet"
   }
 
   spec {
@@ -215,6 +216,7 @@ resource "kubernetes_service" "aks_helloworld_one" {
 resource "kubernetes_ingress_v1" "hello_world_ingress" {
   metadata {
     name = "shared-ingress"
+    namespace = "streetcroquet"
     annotations = {
       "nginx.ingress.kubernetes.io/ssl-redirect"  = "false"
     }
@@ -240,6 +242,23 @@ resource "kubernetes_ingress_v1" "hello_world_ingress" {
         }
       }
     }
+  }
+}
+
+resource "kubernetes_ingress_v1" "argocd_ingress" {
+  metadata {
+    name = "shared-ingress"
+    namespace = "argocd"
+    annotations = {
+      "nginx.ingress.kubernetes.io/ssl-redirect"  = "true"
+      #       "nginx.ingress.kubernetes.io/backend-protocol"   = "HTTPS"
+#       "nginx.ingress.kubernetes.io/ssl-redirect"       = "true"
+#       "nginx.ingress.kubernetes.io/force-ssl-redirect" = "true"
+    }
+  }
+
+  spec {
+    ingress_class_name = "nginx"
     rule {
       host = "argo.dev.tgcportal.com"
       http {
@@ -256,19 +275,6 @@ resource "kubernetes_ingress_v1" "hello_world_ingress" {
             }
           }
         }
-        # path {
-        #   path      = "/"
-        #   path_type = "Prefix"
-
-        #   backend {
-        #     service {
-        #       name = "argocd-server"
-        #       port {
-        #         number = 443
-        #       }
-        #     }
-        #   }
-        # }
       }
     }
   }
