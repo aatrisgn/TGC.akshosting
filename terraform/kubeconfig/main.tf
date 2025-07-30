@@ -36,6 +36,14 @@ resource "azurerm_public_ip" "aks_public_ip" {
   sku                 = "Standard"
 }
 
+resource "azurerm_public_ip" "aks_public_ip_02" {
+  name                = "pip-akshosting-argocdui-public-ip-02"
+  location            = data.azurerm_resource_group.default_resource_group.location
+  resource_group_name = data.azurerm_resource_group.default_resource_group.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
 resource "kubernetes_namespace" "argocd_namespace" {
   metadata {
     name = "argocd"
@@ -88,6 +96,44 @@ resource "kubernetes_service" "nginx_ingress" {
       name        = "https"
       port        = 443
       target_port = 8080
+      protocol    = "TCP"
+    }
+  }
+}
+
+resource "kubernetes_service" "nginx_ingress" {
+  metadata {
+    name      = "argocd-server-lb-ingress"
+    namespace = "argocd"
+    annotations = {
+      "service.beta.kubernetes.io/azure-load-balancer-resource-group" = data.azurerm_resource_group.default_resource_group.name
+      "service.beta.kubernetes.io/azure-pip-name"                     = azurerm_public_ip.aks_public_ip_02.name
+    }
+    labels = {
+      "app.kubernetes.io/component" = "server"
+      "app.kubernetes.io/name" = "argocd-server"
+      "app.kubernetes.io/part-of" = "argocd"
+    }
+  }
+
+  spec {
+    type = "LoadBalancer"
+
+    selector = {
+      "app.kubernetes.io/name" = "argocd-ui"
+    }
+
+    port {
+      name        = "http"
+      port        = 80
+      target_port = 80
+      protocol    = "TCP"
+    }
+
+    port {
+      name        = "https"
+      port        = 443
+      target_port = 443
       protocol    = "TCP"
     }
   }
