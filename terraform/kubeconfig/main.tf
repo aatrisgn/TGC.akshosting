@@ -105,6 +105,14 @@ resource "helm_release" "ingress_nginx" {
       value = "/healthz"
     },
     {
+      name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-pip-name"
+      value = azurerm_public_ip.aks_public_ip.name
+    },
+    {
+      name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-load-balancer-resource-group"
+      value = data.azurerm_resource_group.default_resource_group.name
+    },
+    {
       name  = "controller.service.externalTrafficPolicy"
       value = "Local"
     },
