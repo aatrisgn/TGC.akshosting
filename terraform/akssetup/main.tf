@@ -14,6 +14,7 @@ resource "azurerm_role_assignment" "network_contributor" {
 #Update app reg accordingly to Entra
 #Enable logging
 #Fix DNS domain for it
+# We need to ensure pull access on ACR
 resource "azurerm_kubernetes_cluster" "aks_cluster" {
   name                             = "aks-akshosting-${var.environment_type_name}-${local.resource_location_name}"
   location                         = data.azurerm_resource_group.default_resource_group.location
