@@ -9,7 +9,4 @@ provider "azuread" {
 }
 
 provider "helm" {
-  registry {
-    url = "tgclzdevacr.azurecr.io"
-  }
 }
