@@ -71,105 +71,88 @@ resource "helm_release" "ingress_nginx" {
   chart      = "ingress-nginx"
   version    = "4.7.1"
 
-  set {
-    name  = "controller.replicaCount"
-    value = 2
-  }
-
-  set {
-    name  = "controller.nodeSelector.kubernetes\\.io/os"
-    value = "linux"
-  }
-
-  set {
-    name  = "controller.image.registry"
-    value = "tgclzdevacr.azurecr.io"
-  }
-
-  set {
-    name  = "controller.image.image"
-    value = "ingress-nginx/controller"
-  }
-
-  set {
-    name  = "controller.image.tag"
-    value = "v1.8.1"
-  }
-
-  set {
-    name  = "controller.image.digest"
-    value = ""
-  }
-
-  set {
-    name  = "controller.admissionWebhooks.patch.nodeSelector.kubernetes\\.io/os"
-    value = "linux"
-  }
-
-  set {
-    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-load-balancer-health-probe-request-path"
-    value = "/healthz"
-  }
-
-  set {
-    name  = "controller.service.externalTrafficPolicy"
-    value = "Local"
-  }
-
-  set {
-    name  = "controller.admissionWebhooks.patch.image.registry"
-    value = "tgclzdevacr.azurecr.io"
-  }
-
-  set {
-    name  = "controller.admissionWebhooks.patch.image.image"
-    value = "ingress-nginx/kube-webhook-certgen"
-  }
-
-  set {
-    name  = "controller.admissionWebhooks.patch.image.tag"
-    value = "v20230407"
-  }
-
-  set {
-    name  = "controller.admissionWebhooks.patch.image.digest"
-    value = ""
-  }
-
-  set {
-    name  = "defaultBackend.nodeSelector.kubernetes\\.io/os"
-    value = "linux"
-  }
-
-  set {
-    name  = "defaultBackend.image.registry"
-    value = "tgclzdevacr.azurecr.io"
-  }
-
-  set {
-    name  = "defaultBackend.image.image"
-    value = "defaultbackend-amd64"
-  }
-
-  set {
-    name  = "defaultBackend.image.tag"
-    value = "1.5"
-  }
-
-  set {
-    name  = "defaultBackend.image.digest"
-    value = ""
-  }
-
-  set {
-    name = "controller.service.loadBalancerIP"
-    value = azurerm_public_ip.aks_public_ip.ip_address
-  }
-
-  set {
-    name = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-load-balancer-internal"
-    value = "true"
-  }
+  set = [
+    {
+      name  = "controller.replicaCount"
+      value = 2
+    },
+    {
+      name  = "controller.nodeSelector.kubernetes\\.io/os"
+      value = "linux"
+    },
+    {
+      name  = "controller.nodeSelector.kubernetes\\.io/os"
+      value = "linux"
+    },
+    {
+      name  = "controller.image.image"
+      value = "ingress-nginx/controller"
+    },
+    {
+      name  = "controller.image.tag"
+      value = "v1.8.1"
+    },
+    {
+      name  = "controller.image.digest"
+      value = ""
+    },
+    {
+      name  = "controller.admissionWebhooks.patch.nodeSelector.kubernetes\\.io/os"
+      value = "linux"
+    },
+    {
+      name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-load-balancer-health-probe-request-path"
+      value = "/healthz"
+    },
+    {
+      name  = "controller.service.externalTrafficPolicy"
+      value = "Local"
+    },
+    {
+      name  = "controller.admissionWebhooks.patch.image.registry"
+      value = "tgclzdevacr.azurecr.io"
+    },
+    {
+      name  = "controller.admissionWebhooks.patch.image.image"
+      value = "ingress-nginx/kube-webhook-certgen"
+    },
+    {
+      name  = "controller.admissionWebhooks.patch.image.tag"
+      value = "v20230407"
+    },
+    {
+      name  = "controller.admissionWebhooks.patch.image.digest"
+      value = ""
+    },
+    {
+      name  = "defaultBackend.nodeSelector.kubernetes\\.io/os"
+      value = "linux"
+    },
+    {
+      name  = "defaultBackend.image.registry"
+      value = "tgclzdevacr.azurecr.io" 
+    },
+    {
+      name  = "defaultBackend.image.image"
+      value = "defaultbackend-amd64"
+    },
+    {
+      name  = "defaultBackend.image.tag"
+      value = "1.5"
+    },
+    {
+      name  = "defaultBackend.image.digest"
+      value = ""
+    },
+    {
+      name = "controller.service.loadBalancerIP"
+      value = azurerm_public_ip.aks_public_ip.ip_address
+    },
+    {
+      name = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-load-balancer-internal"
+      value = "true"
+    }
+  ]
 }
 
 
