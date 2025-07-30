@@ -32,8 +32,8 @@ jobs:
           tenant-id: ${{ secrets.AKSHOSTING_DEV_TENANT_ID }}
           subscription-id: ${{ secrets.AKSHOSTING_DEV_SUBSCRIPTION_ID }}
     
-    - run: bash "${{ github.workspace }}/.github/scripts/import_nginx_ingress.sh" 
-      name: "Build and publish webapp to ACR"
+    - run: bash "${{ github.workspace }}/.github/scripts/import_nginx_ingress.sh" "${{ env.acr_registry }}"
+      name: "Import images into ACR"
 
   deploy_aks:
     runs-on: ubuntu-latest

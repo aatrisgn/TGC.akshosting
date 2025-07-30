@@ -1,4 +1,4 @@
-REGISTRY_NAME=${{ env.acr_registry }}
+REGISTRY_NAME=$1
 SOURCE_REGISTRY=registry.k8s.io
 CONTROLLER_IMAGE=ingress-nginx/controller
 CONTROLLER_TAG=v1.8.1
