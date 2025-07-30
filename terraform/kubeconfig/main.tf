@@ -155,6 +155,96 @@ resource "helm_release" "ingress_nginx" {
   ]
 }
 
+resource "kubernetes_deployment" "aks_helloworld_one" {
+  metadata {
+    name = "aks-streetcroquet"
+    labels = {
+      app = "aks-streetcroquet"
+    }
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = {
+        app = "aks-streetcroquet"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          app = "aks-streetcroquet"
+        }
+      }
+
+      spec {
+        container {
+          name  = "aks-streetcroquet"
+          image = "tgclzdevacr.azurecr.io/streetcroquetdk:latest"
+
+          port {
+            container_port = 80
+          }
+        }
+      }
+    }
+  }
+}
+
+resource "kubernetes_service" "aks_helloworld_one" {
+  metadata {
+    name = "aks-streetcroquet"
+  }
+
+  spec {
+    selector = {
+      app = "aks-streetcroquet"
+    }
+
+    port {
+      port        = 80
+      target_port = 80
+    }
+
+    type = "ClusterIP"
+  }
+}
+
+resource "kubernetes_ingress_v1" "hello_world_ingress" {
+  metadata {
+    name = "shared-ingress"
+    annotations = {
+      "nginx.ingress.kubernetes.io/ssl-redirect"  = "false"
+      "nginx.ingress.kubernetes.io/use-regex"     = "true"
+      "nginx.ingress.kubernetes.io/rewrite-target" = "/$2"
+    }
+  }
+
+  spec {
+    ingress_class_name = "nginx"
+    rule {
+      http {
+        path {
+          path      = "/(.*)"
+          path_type = "Prefix"
+
+          backend {
+            service {
+              name = "aks-streetcroquet"
+              port {
+                number = 80
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
 
 # resource "kubernetes_service" "nginx_ingress" {
 #   metadata {
