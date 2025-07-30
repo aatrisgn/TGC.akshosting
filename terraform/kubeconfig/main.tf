@@ -50,6 +50,12 @@ resource "kubernetes_namespace" "argocd_namespace" {
   }
 }
 
+resource "kubernetes_namespace" "streetcroquet_namespace" {
+  metadata {
+    name = "streetcroquet"
+  }
+}
+
 resource "null_resource" "apply_manifest" {
   provisioner "local-exec" {
     command = <<EOF
@@ -196,7 +202,7 @@ resource "kubernetes_deployment" "aks_helloworld_one" {
 resource "kubernetes_service" "aks_helloworld_one" {
   metadata {
     name = "aks-streetcroquet"
-    namespace = "streetcroquet"
+    namespace = kubernetes_namespace.streetcroquet_namespace.metadata.0.name
   }
 
   spec {
