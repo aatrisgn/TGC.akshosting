@@ -7,3 +7,9 @@ provider "azuread" {
   use_oidc  = true
   tenant_id = var.tenant_id
 }
+
+provider "helm" {
+  registry {
+    url = "tgclzdevacr.azurecr.io"
+  }
+}

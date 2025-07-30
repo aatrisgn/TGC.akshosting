@@ -62,6 +62,116 @@ resource "null_resource" "apply_manifest" {
   }
 }
 
+resource "helm_release" "ingress_nginx" {
+  name       = "ingress-nginx"
+  namespace  = "ingress-basic"
+  create_namespace = true
+
+  repository = "https://kubernetes.github.io/ingress-nginx"
+  chart      = "ingress-nginx"
+  version    = "4.7.1"
+
+  set {
+    name  = "controller.replicaCount"
+    value = 2
+  }
+
+  set {
+    name  = "controller.nodeSelector.kubernetes\\.io/os"
+    value = "linux"
+  }
+
+  set {
+    name  = "controller.image.registry"
+    value = "tgclzdevacr.azurecr.io"
+  }
+
+  set {
+    name  = "controller.image.image"
+    value = "ingress-nginx/controller"
+  }
+
+  set {
+    name  = "controller.image.tag"
+    value = "v1.8.1"
+  }
+
+  set {
+    name  = "controller.image.digest"
+    value = ""
+  }
+
+  set {
+    name  = "controller.admissionWebhooks.patch.nodeSelector.kubernetes\\.io/os"
+    value = "linux"
+  }
+
+  set {
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-load-balancer-health-probe-request-path"
+    value = "/healthz"
+  }
+
+  set {
+    name  = "controller.service.externalTrafficPolicy"
+    value = "Local"
+  }
+
+  set {
+    name  = "controller.admissionWebhooks.patch.image.registry"
+    value = "tgclzdevacr.azurecr.io"
+  }
+
+  set {
+    name  = "controller.admissionWebhooks.patch.image.image"
+    value = "ingress-nginx/kube-webhook-certgen"
+  }
+
+  set {
+    name  = "controller.admissionWebhooks.patch.image.tag"
+    value = "v20230407"
+  }
+
+  set {
+    name  = "controller.admissionWebhooks.patch.image.digest"
+    value = ""
+  }
+
+  set {
+    name  = "defaultBackend.nodeSelector.kubernetes\\.io/os"
+    value = "linux"
+  }
+
+  set {
+    name  = "defaultBackend.image.registry"
+    value = "tgclzdevacr.azurecr.io"
+  }
+
+  set {
+    name  = "defaultBackend.image.image"
+    value = "defaultbackend-amd64"
+  }
+
+  set {
+    name  = "defaultBackend.image.tag"
+    value = "1.5"
+  }
+
+  set {
+    name  = "defaultBackend.image.digest"
+    value = ""
+  }
+
+  set {
+    name = "controller.service.loadBalancerIP"
+    value = azurerm_public_ip.aks_public_ip.ip_address
+  }
+
+  set {
+    name = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-load-balancer-internal"
+    value = "true"
+  }
+}
+
 
 # resource "kubernetes_service" "nginx_ingress" {
 #   metadata {

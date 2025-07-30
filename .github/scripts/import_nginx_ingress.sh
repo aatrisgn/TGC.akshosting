@@ -17,7 +17,7 @@ CONTROLLER_TAG_EXISTS=$(az acr repository show-tags \
 
 if [ -z "$CONTROLLER_TAG_EXISTS" ]; then
     echo "importing $CONTROLLER_IMAGE:$CONTROLLER_TAG ..."
-    az acr import --force --name $REGISTRY_NAME --source $SOURCE_REGISTRY/$CONTROLLER_IMAGE:$CONTROLLER_TAG --image $CONTROLLER_IMAGE:$CONTROLLER_TAG
+    az acr import --name $REGISTRY_NAME --source $SOURCE_REGISTRY/$CONTROLLER_IMAGE:$CONTROLLER_TAG --image $CONTROLLER_IMAGE:$CONTROLLER_TAG
     echo "imported $CONTROLLER_IMAGE:$CONTROLLER_TAG !"
 else
     echo "$CONTROLLER_IMAGE:$CONTROLLER_TAG already imported. Skipping apply."
@@ -31,7 +31,7 @@ PATCH_TAG_EXISTS=$(az acr repository show-tags \
 
 if [ -z "$PATCH_TAG_EXISTS" ]; then
     echo "importing $PATCH_IMAGE:$PATCH_TAG ..."
-    az acr import --force --name $REGISTRY_NAME --source $SOURCE_REGISTRY/$PATCH_IMAGE:$PATCH_TAG --image $PATCH_IMAGE:$PATCH_TAG
+    az acr import --name $REGISTRY_NAME --source $SOURCE_REGISTRY/$PATCH_IMAGE:$PATCH_TAG --image $PATCH_IMAGE:$PATCH_TAG
     echo "imported $PATCH_IMAGE:$PATCH_TAG !"
 else
     echo "$PATCH_IMAGE:$PATCH_TAG already imported. Skipping apply."
@@ -45,7 +45,7 @@ DEFAULTBACKEND_TAG_EXISTS=$(az acr repository show-tags \
 
 if [ -z "$DEFAULTBACKEND_TAG_EXISTS" ]; then
     echo "importing $DEFAULTBACKEND_IMAGE:$DEFAULTBACKEND_TAG ..."
-    az acr import --force --name $REGISTRY_NAME --source $SOURCE_REGISTRY/$DEFAULTBACKEND_IMAGE:$DEFAULTBACKEND_TAG --image $DEFAULTBACKEND_IMAGE:$DEFAULTBACKEND_TAG
+    az acr import --name $REGISTRY_NAME --source $SOURCE_REGISTRY/$DEFAULTBACKEND_IMAGE:$DEFAULTBACKEND_TAG --image $DEFAULTBACKEND_IMAGE:$DEFAULTBACKEND_TAG
     echo "imported $DEFAULTBACKEND_IMAGE:$DEFAULTBACKEND_TAG !"
 else
     echo "$DEFAULTBACKEND_IMAGE:$DEFAULTBACKEND_TAG already imported. Skipping apply."
