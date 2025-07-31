@@ -71,7 +71,7 @@ resource "null_resource" "apply_manifest" {
 module "nginx_controller" {
   source = "./modules/nginx_controller"
   
-  public_ip = azurerm_public_ip.aks_public_ip.ip_address
+  public_ip_name = azurerm_public_ip.aks_public_ip.name
   public_ip_resource_group = azurerm_public_ip.aks_public_ip.resource_group_name
 }
 

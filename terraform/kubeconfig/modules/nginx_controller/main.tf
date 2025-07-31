@@ -42,7 +42,7 @@ resource "helm_release" "ingress_nginx" {
     },
     {
       name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-pip-name"
-      value = var.public_ip
+      value = var.public_ip_name
     },
     {
       name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-load-balancer-resource-group"
