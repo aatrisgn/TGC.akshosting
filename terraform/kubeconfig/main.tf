@@ -222,7 +222,7 @@ resource "kubernetes_service" "aks_helloworld_one" {
 resource "kubernetes_ingress_v1" "hello_world_ingress" {
   metadata {
     name = "streetcroquet-ingress"
-    namespace = "streetcroquet"
+    namespace = kubernetes_namespace.streetcroquet_namespace.metadata.0.name
     annotations = {
       "nginx.ingress.kubernetes.io/ssl-redirect"  = "false"
     }
