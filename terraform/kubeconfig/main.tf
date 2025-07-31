@@ -177,6 +177,7 @@ resource "kubernetes_ingress_v1" "argocd_ingress" {
     annotations = {
       "nginx.ingress.kubernetes.io/ssl-redirect"  = "false"
       "kubernetes.io/tls-acme" = "true"
+      "cert-manager.io/cluster-issuer": "argocertissuer"
       #       "nginx.ingress.kubernetes.io/backend-protocol"   = "HTTPS"
 #       "nginx.ingress.kubernetes.io/ssl-redirect"       = "true"
 #       "nginx.ingress.kubernetes.io/force-ssl-redirect" = "true"
