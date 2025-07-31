@@ -120,9 +120,9 @@ jobs:
         tenant-id: ${{ secrets.AKSHOSTING_DEV_TENANT_ID }}
         subscription-id: ${{ secrets.AKSHOSTING_DEV_SUBSCRIPTION_ID }}
 
-    - name: Setup kubectl
-      id: install-kubectl
-      uses: azure/setup-kubectl@v3
+    # - name: Setup kubectl
+    #   id: install-kubectl
+    #   uses: azure/setup-kubectl@v3
 
     - name: Set AKS context
       id: set-context
@@ -131,15 +131,15 @@ jobs:
         resource-group: '${{ needs.deploy_aks.outputs.AKS_RESOURCE_GROUP_NAME  }}' 
         cluster-name: '${{ needs.deploy_aks.outputs.AKS_CLUSER_NAME }}'
 
-    - name: Install AKS extension
-      run: |
-        az aks install-cli
+    # - name: Install AKS extension
+    #   run: |
+    #     az aks install-cli
 
-        az extension add -n k8s-configuration
-        az extension add -n k8s-extension
+    #     az extension add -n k8s-configuration
+    #     az extension add -n k8s-extension
 
-        az extension update -n k8s-configuration
-        az extension update -n k8s-extension
+    #     az extension update -n k8s-configuration
+    #     az extension update -n k8s-extension
     
     - name: Install Terraform
       run: bash "${{ github.workspace }}/.github/scripts/install_terraform.sh" 

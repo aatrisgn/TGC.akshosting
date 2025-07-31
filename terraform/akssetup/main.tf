@@ -42,6 +42,9 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     node_count      = 1
     vm_size         = "Standard_B2s"
     os_disk_size_gb = 30
+    auto_scaling_enabled = true
+    max_count = 5
+    min_count = 2
   }
 
   identity {
