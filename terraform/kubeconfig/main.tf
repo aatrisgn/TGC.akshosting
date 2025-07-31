@@ -175,7 +175,8 @@ resource "kubernetes_ingress_v1" "argocd_ingress" {
     name = "argocd-ingress"
     namespace = "argocd"
     annotations = {
-      "nginx.ingress.kubernetes.io/ssl-redirect"  = "true"
+      "nginx.ingress.kubernetes.io/ssl-redirect"  = "false"
+      "kubernetes.io/tls-acme" = "true"
       #       "nginx.ingress.kubernetes.io/backend-protocol"   = "HTTPS"
 #       "nginx.ingress.kubernetes.io/ssl-redirect"       = "true"
 #       "nginx.ingress.kubernetes.io/force-ssl-redirect" = "true"
@@ -184,6 +185,10 @@ resource "kubernetes_ingress_v1" "argocd_ingress" {
 
   spec {
     ingress_class_name = "nginx"
+    tls {
+        secret_name = "argo-dev-tls"
+        hosts = ["argo.dev.tgcportal.com"]
+      }
     rule {
       host = "argo.dev.tgcportal.com"
       http {
