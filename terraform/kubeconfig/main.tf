@@ -208,4 +208,6 @@ resource "kubernetes_ingress_v1" "argocd_ingress" {
       }
     }
   }
+
+  depends_on = [ module.cert_manager ]
 }

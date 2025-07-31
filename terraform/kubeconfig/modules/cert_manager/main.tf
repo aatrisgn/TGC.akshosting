@@ -37,6 +37,7 @@ resource "kubernetes_manifest" "letsencrypt_clusterissuer" {
       }
     }
   }
+  depends_on = [ helm_release.cert_manager ]
 }
 
 resource "kubernetes_manifest" "argo_dev_certificate" {
