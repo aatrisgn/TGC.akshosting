@@ -181,7 +181,8 @@ resource "kubernetes_ingress_v1" "argocd_ingress" {
     namespace = "argocd"
     annotations = {
       "cert-manager.io/issuer": "letsencrypt-staging"
-      "nginx.ingress.kubernetes.io/ssl-redirect"  = "false"
+      "nginx.ingress.kubernetes.io/force-ssl-redirect"= "true"
+    "nginx.ingress.kubernetes.io/ssl-passthrough" = "true"
       #       "nginx.ingress.kubernetes.io/backend-protocol"   = "HTTPS"
 #       "nginx.ingress.kubernetes.io/ssl-redirect"       = "true"
 #       "nginx.ingress.kubernetes.io/force-ssl-redirect" = "true"
@@ -201,7 +202,7 @@ resource "kubernetes_ingress_v1" "argocd_ingress" {
             service {
               name = "argocd-server"
               port {
-                number = 80
+                name = "https"
               }
             }
           }
