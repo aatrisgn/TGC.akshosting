@@ -144,11 +144,16 @@ resource "kubernetes_ingress_v1" "hello_world_ingress" {
     namespace = kubernetes_namespace.streetcroquet_namespace.metadata.0.name
     annotations = {
       "nginx.ingress.kubernetes.io/ssl-redirect"  = "false"
+      "cert-manager.io/cluster-issuer": "streetcrocketcertissuer"
     }
   }
 
   spec {
     ingress_class_name = "nginx"
+    tls {
+        secret_name = "dev-streetcrocket-tls"
+        hosts = ["dev.streetcrocket.com"]
+      }
     rule {
       host = "dev.streetcrocket.com"
       http {
@@ -176,8 +181,6 @@ resource "kubernetes_ingress_v1" "argocd_ingress" {
     namespace = "argocd"
     annotations = {
       "nginx.ingress.kubernetes.io/ssl-redirect"  = "false"
-      "kubernetes.io/tls-acme" = "true"
-      "cert-manager.io/cluster-issuer": "argocertissuer"
       #       "nginx.ingress.kubernetes.io/backend-protocol"   = "HTTPS"
 #       "nginx.ingress.kubernetes.io/ssl-redirect"       = "true"
 #       "nginx.ingress.kubernetes.io/force-ssl-redirect" = "true"
@@ -186,10 +189,6 @@ resource "kubernetes_ingress_v1" "argocd_ingress" {
 
   spec {
     ingress_class_name = "nginx"
-    tls {
-        secret_name = "letsencrypt"
-        hosts = ["argo.dev.tgcportal.com"]
-      }
     rule {
       host = "argo.dev.tgcportal.com"
       http {
@@ -201,7 +200,7 @@ resource "kubernetes_ingress_v1" "argocd_ingress" {
             service {
               name = "argocd-server"
               port {
-                number = 8080
+                number = 443
               }
             }
           }

@@ -34,20 +34,20 @@ resource "helm_release" "cert_manager" {
 resource "kubernetes_manifest" "letsencrypt_clusterissuer" {
   manifest = {
     apiVersion = "cert-manager.io/v1"
-    kind       = "Issuer"
+    kind       = "ClusterIssuer"
     metadata = {
-      name = "argoissuer"
-      namespace = "argocd"
+      name = "streetcrocketcertissuer"
+      namespace = "streetcroquet"
     }
-    spec = {
-      acme = {
-        server = "https://acme-staging-v02.api.letsencrypt.org/directory"
-        email  = "asger.thyregod@gmail.com"
-        privateKeySecretRef = {
-          name = "letsencrypt"
-        }
-      }
-    }
+    # spec = {
+    #   acme = {
+    #     server = "https://acme-staging-v02.api.letsencrypt.org/directory"
+    #     email  = "asger.thyregod@gmail.com"
+    #     privateKeySecretRef = {
+    #       name = "letsencrypt"
+    #     }
+    #   }
+    # }
   }
   depends_on = [ helm_release.cert_manager ]
 }
