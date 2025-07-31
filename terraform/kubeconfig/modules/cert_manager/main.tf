@@ -63,7 +63,7 @@ resource "kubernetes_manifest" "letsencrypt_clusterissuer" {
   depends_on = [ helm_release.cert_manager ]
 }
 
-resource "kubernetes_manifest" "letsencrypt_clusterissuer" {
+resource "kubernetes_manifest" "argo_cert_issuer" {
   manifest = {
     apiVersion = "cert-manager.io/v1"
     kind       = "Issuer"
