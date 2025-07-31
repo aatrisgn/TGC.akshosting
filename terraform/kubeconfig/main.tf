@@ -164,6 +164,7 @@ resource "helm_release" "ingress_nginx" {
 resource "kubernetes_deployment" "aks_helloworld_one" {
   metadata {
     name = "aks-streetcroquet"
+    namespace = kubernetes_namespace.streetcroquet_namespace.metadata.0.name
     labels = {
       app = "aks-streetcroquet"
     }
