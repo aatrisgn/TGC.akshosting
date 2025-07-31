@@ -144,7 +144,7 @@ resource "kubernetes_ingress_v1" "hello_world_ingress" {
     namespace = kubernetes_namespace.streetcroquet_namespace.metadata.0.name
     annotations = {
       "nginx.ingress.kubernetes.io/ssl-redirect"  = "false"
-      "cert-manager.io/cluster-issuer": "letsencrypt-prod"
+      "cert-manager.io/issuer": "letsencrypt-staging"
     }
   }
 
