@@ -161,22 +161,3 @@ jobs:
     
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan
-
-    # - name: Create ArgoCD config
-    #   run: |
-    #     kubectl get namespace argocd || kubectl create namespace argocd
-
-    #     if ! kubectl get deployment argocd-server -n argocd > /dev/null 2>&1; then
-    #       kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-    #     else
-    #       echo "Argo CD already installed. Skipping apply."
-    #     fi
-
-    #     kubectl -n argocd expose service argocd-server --type LoadBalancer --name argocd-server-lb --port 80,443 --target-port 8080
-
-# argocd admin initial-password -n argocd
-#argocd login <ARGOCD_SERVER>
-#argocd account update-password
-#kubectl patch deployment argocd-server -n argocd \
-#   --type='json' \
-#   -p='[{"op": "add", "path": "/spec/template/metadata/labels/azure.workload.identity~1use", "value": "true"}]'

@@ -21,7 +21,7 @@ resource "helm_release" "cert_manager" {
 
 resource "kubernetes_manifest" "letsencrypt_clusterissuer" {
   manifest = {
-    apiVersion = "certmanager.k8s.io/v1alpha1"
+    apiVersion = "cert-manager.io/v1"
     kind       = "ClusterIssuer"
     metadata = {
       name = "letsencrypt"
@@ -40,35 +40,36 @@ resource "kubernetes_manifest" "letsencrypt_clusterissuer" {
   depends_on = [ helm_release.cert_manager ]
 }
 
-resource "kubernetes_manifest" "argo_dev_certificate" {
-  manifest = {
-    apiVersion = "certmanager.k8s.io/v1alpha1"
-    kind       = "Certificate"
-    metadata = {
-      name = "argo-dev-tls"
-    }
-    spec = {
-      secretName = "argo-dev-tls"
-      issuerRef = {
-        name = "letsencrypt"
-        kind = "ClusterIssuer"
-      }
-      dnsNames = [
-        "argo.dev.tgcportal.com"
-      ]
-      acme = {
-        config = [
-          {
-            http01 = {
-              ingressClass = "nginx"
-            }
-            domains = [
-              "argo.dev.tgcportal.com"
-            ]
-          }
-        ]
-      }
-    }
-  }
-}
+# resource "kubernetes_manifest" "argo_dev_certificate" {
+#   manifest = {
+#     apiVersion = "cert-manager.io/v1"
+#     kind       = "Certificate"
+#     metadata = {
+#       name = "argo-dev-tls"
+#     }
+#     spec = {
+#       secretName = "argo-dev-tls"
+#       issuerRef = {
+#         name = "letsencrypt"
+#         kind = "ClusterIssuer"
+#       }
+#       dnsNames = [
+#         "argo.dev.tgcportal.com"
+#       ]
+#       acme = {
+#         config = [
+#           {
+#             http01 = {
+#               ingressClass = "nginx"
+#             }
+#             domains = [
+#               "argo.dev.tgcportal.com"
+#             ]
+#           }
+#         ]
+#       }
+#     }
+#   }
+#   depends_on = [ kubernetes_manifest.letsencrypt_clusterissuer ]
+# }
 
