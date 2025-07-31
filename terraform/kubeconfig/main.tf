@@ -221,7 +221,7 @@ resource "kubernetes_service" "aks_helloworld_one" {
 
 resource "kubernetes_ingress_v1" "hello_world_ingress" {
   metadata {
-    name = "shared-ingress"
+    name = "streetcroquet-ingress"
     namespace = "streetcroquet"
     annotations = {
       "nginx.ingress.kubernetes.io/ssl-redirect"  = "false"
@@ -253,7 +253,7 @@ resource "kubernetes_ingress_v1" "hello_world_ingress" {
 
 resource "kubernetes_ingress_v1" "argocd_ingress" {
   metadata {
-    name = "shared-ingress"
+    name = "argocd-ingress"
     namespace = "argocd"
     annotations = {
       "nginx.ingress.kubernetes.io/ssl-redirect"  = "true"
