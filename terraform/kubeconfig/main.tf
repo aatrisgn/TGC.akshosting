@@ -187,7 +187,7 @@ resource "kubernetes_ingress_v1" "argocd_ingress" {
   spec {
     ingress_class_name = "nginx"
     tls {
-        secret_name = "argo-dev-tls"
+        secret_name = "letsencrypt"
         hosts = ["argo.dev.tgcportal.com"]
       }
     rule {
