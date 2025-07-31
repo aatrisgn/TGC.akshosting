@@ -44,15 +44,15 @@ resource "azurerm_public_ip" "aks_public_ip_02" {
   sku                 = "Standard"
 }
 
-resource "kubernetes_namespace" "argocd_namespace" {
-  metadata {
-    name = "argocd"
-  }
-}
-
 resource "kubernetes_namespace" "streetcroquet_namespace" {
   metadata {
     name = "streetcroquet"
+  }
+}
+
+resource "kubernetes_namespace" "argocd_namespace" {
+  metadata {
+    name = "argocd"
   }
 }
 
@@ -68,97 +68,15 @@ resource "null_resource" "apply_manifest" {
   }
 }
 
-resource "helm_release" "ingress_nginx" {
-  name       = "ingress-nginx"
-  namespace  = "ingress-basic"
-  create_namespace = true
+module "nginx_controller" {
+  source = "./modules/nginx_controller"
+  
+  public_ip = azurerm_public_ip.aks_public_ip.ip_address
+  public_ip_resource_group = azurerm_public_ip.aks_public_ip.resource_group_name
+}
 
-  repository = "https://kubernetes.github.io/ingress-nginx"
-  chart      = "ingress-nginx"
-  version    = "4.7.1"
-
-  set = [
-    {
-      name  = "controller.replicaCount"
-      value = 2
-    },
-    {
-      name  = "controller.nodeSelector.kubernetes\\.io/os"
-      value = "linux"
-    },
-    {
-      name  = "controller.nodeSelector.kubernetes\\.io/os"
-      value = "linux"
-    },
-    {
-      name  = "controller.image.image"
-      value = "ingress-nginx/controller"
-    },
-    {
-      name  = "controller.image.tag"
-      value = "v1.8.1"
-    },
-    {
-      name  = "controller.image.digest"
-      value = ""
-    },
-    {
-      name  = "controller.admissionWebhooks.patch.nodeSelector.kubernetes\\.io/os"
-      value = "linux"
-    },
-    {
-      name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-load-balancer-health-probe-request-path"
-      value = "/healthz"
-    },
-    {
-      name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-pip-name"
-      value = azurerm_public_ip.aks_public_ip.name
-    },
-    {
-      name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/azure-load-balancer-resource-group"
-      value = data.azurerm_resource_group.default_resource_group.name
-    },
-    {
-      name  = "controller.service.externalTrafficPolicy"
-      value = "Local"
-    },
-    {
-      name  = "controller.admissionWebhooks.patch.image.registry"
-      value = "tgclzdevacr.azurecr.io"
-    },
-    {
-      name  = "controller.admissionWebhooks.patch.image.image"
-      value = "ingress-nginx/kube-webhook-certgen"
-    },
-    {
-      name  = "controller.admissionWebhooks.patch.image.tag"
-      value = "v20230407"
-    },
-    {
-      name  = "controller.admissionWebhooks.patch.image.digest"
-      value = ""
-    },
-    {
-      name  = "defaultBackend.nodeSelector.kubernetes\\.io/os"
-      value = "linux"
-    },
-    {
-      name  = "defaultBackend.image.registry"
-      value = "tgclzdevacr.azurecr.io" 
-    },
-    {
-      name  = "defaultBackend.image.image"
-      value = "defaultbackend-amd64"
-    },
-    {
-      name  = "defaultBackend.image.tag"
-      value = "1.5"
-    },
-    {
-      name  = "defaultBackend.image.digest"
-      value = ""
-    }
-  ]
+module "cert_manager" {
+  source = "./modules/cert_manager"
 }
 
 resource "kubernetes_deployment" "aks_helloworld_one" {
