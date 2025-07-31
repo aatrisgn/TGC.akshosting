@@ -34,16 +34,18 @@ resource "helm_release" "cert_manager" {
 resource "kubernetes_manifest" "letsencrypt_clusterissuer" {
   manifest = {
     apiVersion = "cert-manager.io/v1"
-    kind       = "ClusterIssuer"
+    kind       = "Issuer"
     metadata = {
-      name = "letsencryptissuer"
+      name = "letsencrypt-staging"
+      namespace = "streetcroquet"
     }
     spec = {
       acme = {
         server = "https://acme-staging-v02.api.letsencrypt.org/directory"
         email  = "asger.thyregod@gmail.com"
+        profile = "tlsserver"
         privateKeySecretRef = {
-          name = "letsencrypt-prod"
+          name = "letsencrypt-staging"
         }
         
         solvers = [
