@@ -34,7 +34,7 @@ resource "helm_release" "cert_manager" {
 resource "kubernetes_manifest" "letsencrypt_clusterissuer" {
   manifest = {
     apiVersion = "cert-manager.io/v1"
-    kind       = "ClusterIssuer"
+    kind       = "Issuer"
     metadata = {
       name = "streetcrocketcertissuer"
       namespace = "streetcroquet"
