@@ -63,45 +63,34 @@ resource "kubernetes_manifest" "letsencrypt_clusterissuer" {
   depends_on = [ helm_release.cert_manager ]
 }
 
-# apiVersion: cert-manager.io/v1
-# kind: Issuer
-# metadata:
-#   name: ca-issuer
-#   namespace: mesh-system
-# spec:
-#   ca:
-#     secretName: ca-key-pair
-
-# resource "kubernetes_manifest" "argo_dev_certificate" {
-#   manifest = {
-#     apiVersion = "cert-manager.io/v1"
-#     kind       = "Certificate"
-#     metadata = {
-#       name = "argo-dev-tls"
-#     }
-#     spec = {
-#       secretName = "argo-dev-tls"
-#       issuerRef = {
-#         name = "letsencrypt"
-#         kind = "ClusterIssuer"
-#       }
-#       dnsNames = [
-#         "argo.dev.tgcportal.com"
-#       ]
-#       acme = {
-#         config = [
-#           {
-#             http01 = {
-#               ingressClass = "nginx"
-#             }
-#             domains = [
-#               "argo.dev.tgcportal.com"
-#             ]
-#           }
-#         ]
-#       }
-#     }
-#   }
-#   depends_on = [ kubernetes_manifest.letsencrypt_clusterissuer ]
-# }
-
+resource "kubernetes_manifest" "letsencrypt_clusterissuer" {
+  manifest = {
+    apiVersion = "cert-manager.io/v1"
+    kind       = "Issuer"
+    metadata = {
+      name = "letsencrypt-staging"
+      namespace = "argocd"
+    }
+    spec = {
+      acme = {
+        server = "https://acme-staging-v02.api.letsencrypt.org/directory"
+        email  = "asger.thyregod@gmail.com"
+        profile = "tlsserver"
+        privateKeySecretRef = {
+          name = "letsencrypt-staging"
+        }
+        
+        solvers = [
+          {
+            http01 = {
+              ingress = {
+                class = "nginx"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+  depends_on = [ helm_release.cert_manager ]
+}
