@@ -87,7 +87,7 @@ resource "null_resource" "patch_argocd_service_account" {
     command = <<EOT
       kubectl patch serviceaccount argocd-server \
         -n argocd \
-        -p '{"metadata":{"annotations":{"azure.workload.identity/client-id":"${azuread_application.argocd_ui_appreg.client_id}"}}}'
+        -p '{"template": {"metadata":{"annotations":{"azure.workload.identity/client-id":"${azuread_application.argocd_ui_appreg.client_id}"}}}}'
     EOT
   }
 }
