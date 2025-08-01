@@ -15,6 +15,10 @@ resource "azuread_application" "argocd_ui_appreg" {
   public_client {
     redirect_uris = ["http://localhost:8085/auth/callback"]
   }
+
+  # required_resource_access {
+    
+  # }
 }
 
 resource "azuread_application_api_access" "example_msgraph" {
@@ -77,7 +81,7 @@ resource "null_resource" "patch_argocd_deployment" {
     command = <<EOT
       kubectl patch deployment argocd-server \
         -n argocd \
-        -p '{"metadata":{"annotations":{"azure.workload.identity/use":"true"}}}'
+        -p '{"template": {"metadata":{"annotations":{"azure.workload.identity/use":"true"}}}}'
     EOT
   }
 }
@@ -87,7 +91,7 @@ resource "null_resource" "patch_argocd_service_account" {
     command = <<EOT
       kubectl patch serviceaccount argocd-server \
         -n argocd \
-        -p '{"template": {"metadata":{"annotations":{"azure.workload.identity/client-id":"${azuread_application.argocd_ui_appreg.client_id}"}}}}'
+        -p '{"metadata":{"annotations":{"azure.workload.identity/client-id":"${azuread_application.argocd_ui_appreg.client_id}"}}}'
     EOT
   }
 }
