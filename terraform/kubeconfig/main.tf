@@ -4,6 +4,14 @@ resource "azuread_application" "argocd_wi_appreg" {
 
 resource "azuread_application" "argocd_ui_appreg" {
   display_name = lower("tgc-akshosting-argocduig-auth")
+  required_resource_access {
+    resource_app_id = data.azuread_application_published_app_ids.well_known.result.MicrosoftGraph
+    resource_access {
+      id   = azuread_service_principal.msgraph.oauth2_permission_scope_ids["User.ReadWrite"]
+      type = "Scope"
+    }
+  }
+ 
 }
 
 resource "azuread_service_principal" "product_environment_spns" {
@@ -16,6 +24,7 @@ resource "azuread_application_redirect_uris" "example_web" {
 
   redirect_uris = [
     "https://${azurerm_public_ip.aks_public_ip.ip_address}/auth/callback",
+    "https://argo.dev.tgcportal.com/auth/callback",
   ]
 }
 
@@ -27,6 +36,16 @@ resource "azuread_application_redirect_uris" "example_public" {
     "http://localhost:8085/auth/callback"
   ]
 }
+
+resource "azuread_application_federated_identity_credential" "example" {
+  application_id = azuread_application_registration.argocd_ui_appreg.client_id
+  display_name   = "argocd-ui"
+  description    = "Credentials for ArgoCD UI integration"
+  audiences      = ["api://AzureADTokenExchange"]
+  issuer         = data.azurerm_kubernetes_cluster.example.oidc_issuer_url
+  subject        = "system:serviceaccount:argocd:argocd-server"
+}
+
 
 resource "azurerm_public_ip" "aks_public_ip" {
   name                = "pip-akshosting-argocdui-public-ip"
@@ -67,6 +86,51 @@ resource "null_resource" "apply_manifest" {
     EOF
   }
 }
+
+
+#azure.workload.identity/use: "true"
+resource "kubernetes_manifest" "patch_argocd_server_deployment_annotation" {
+  manifest = {
+    apiVersion = "apps/v1"
+    kind       = "Deployment"
+    metadata = {
+      name      = "argocd-server"
+      namespace = "argocd"
+      annotations = {
+        "azure.workload.identity/use" = "true"
+      }
+    }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      manifest["spec"]
+    ]
+  }
+}
+
+
+resource "kubernetes_manifest" "patch_argocd_server_serviceaccount" {
+  manifest = {
+    apiVersion = "v1"
+    kind       = "ServiceAccount"
+    metadata = {
+      name      = "argocd-server"
+      namespace = "argocd"
+      annotations = {
+        "azure.workload.identity/client-id" = azuread_application.argocd_ui_appreg.client_id
+      }
+    }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      manifest["secrets"],
+      manifest["imagePullSecrets"]
+    ]
+  }
+}
+
 
 module "nginx_controller" {
   source = "./modules/nginx_controller"
@@ -182,10 +246,8 @@ resource "kubernetes_ingress_v1" "argocd_ingress" {
     annotations = {
       "cert-manager.io/issuer": "letsencrypt-staging"
       "nginx.ingress.kubernetes.io/force-ssl-redirect"= "true"
-    "nginx.ingress.kubernetes.io/ssl-passthrough" = "true"
-        "nginx.ingress.kubernetes.io/backend-protocol"   = "HTTPS"
-#       "nginx.ingress.kubernetes.io/ssl-redirect"       = "true"
-#       "nginx.ingress.kubernetes.io/force-ssl-redirect" = "true"
+      "nginx.ingress.kubernetes.io/ssl-passthrough" = "true"
+      "nginx.ingress.kubernetes.io/backend-protocol"   = "HTTPS"
     }
   }
 
