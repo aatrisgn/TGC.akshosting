@@ -4,6 +4,17 @@ resource "azuread_application" "argocd_wi_appreg" {
 
 resource "azuread_application" "argocd_ui_appreg" {
   display_name = lower("tgc-akshosting-argocd-ui-auth") 
+
+  web {
+    redirect_uris = [
+    "https://${azurerm_public_ip.aks_public_ip.ip_address}/auth/callback",
+    "https://argo.dev.tgcportal.com/auth/callback",
+    ]
+  }
+
+  public_client {
+    redirect_uris = ["http://localhost:8085/auth/callback"]
+  }
 }
 
 resource "azuread_application_api_access" "example_msgraph" {
@@ -19,25 +30,6 @@ resource "azuread_service_principal" "product_environment_spns" {
   client_id = azuread_application.argocd_ui_appreg.client_id
 }
 
-resource "azuread_application_redirect_uris" "example_web" {
-  application_id = azuread_application.argocd_ui_appreg.id
-  type           = "Web"
-
-  redirect_uris = [
-    "https://${azurerm_public_ip.aks_public_ip.ip_address}/auth/callback",
-    "https://argo.dev.tgcportal.com/auth/callback",
-  ]
-}
-
-resource "azuread_application_redirect_uris" "example_public" {
-  application_id = azuread_application.argocd_ui_appreg.id
-  type           = "PublicClient"
-
-  redirect_uris = [
-    "http://localhost:8085/auth/callback"
-  ]
-}
-
 resource "azuread_application_federated_identity_credential" "example" {
   application_id = azuread_application.argocd_ui_appreg.id
   display_name   = "argocd-ui"
@@ -50,14 +42,6 @@ resource "azuread_application_federated_identity_credential" "example" {
 
 resource "azurerm_public_ip" "aks_public_ip" {
   name                = "pip-akshosting-argocdui-public-ip"
-  location            = data.azurerm_resource_group.default_resource_group.location
-  resource_group_name = data.azurerm_resource_group.default_resource_group.name
-  allocation_method   = "Static"
-  sku                 = "Standard"
-}
-
-resource "azurerm_public_ip" "aks_public_ip_02" {
-  name                = "pip-akshosting-argocdui-public-ip-02"
   location            = data.azurerm_resource_group.default_resource_group.location
   resource_group_name = data.azurerm_resource_group.default_resource_group.name
   allocation_method   = "Static"
@@ -111,7 +95,7 @@ resource "null_resource" "patch_argocd_service_account" {
 resource "null_resource" "patch_argocd_configmap" {
   provisioner "local-exec" {
     command = <<EOT
-      kubectl patch configmap argocd-server \
+      kubectl patch configmap argocd-cm \
         -n argocd \
         --type merge \
         -p '{
