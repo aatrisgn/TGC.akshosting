@@ -7,7 +7,7 @@ resource "azuread_application" "argocd_ui_appreg" {
 }
 
 resource "azuread_application_api_access" "example_msgraph" {
-  application_id = azuread_application_registration.argocd_ui_appreg.id
+  application_id = azuread_application.argocd_ui_appreg.id
   api_client_id  = data.azuread_application_published_app_ids.well_known.result["MicrosoftGraph"]
 
   scope_ids = [
@@ -39,7 +39,7 @@ resource "azuread_application_redirect_uris" "example_public" {
 }
 
 resource "azuread_application_federated_identity_credential" "example" {
-  application_id = azuread_application_registration.argocd_ui_appreg.client_id
+  application_id = azuread_application.argocd_ui_appreg.client_id
   display_name   = "argocd-ui"
   description    = "Credentials for ArgoCD UI integration"
   audiences      = ["api://AzureADTokenExchange"]
