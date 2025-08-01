@@ -3,7 +3,7 @@ resource "azuread_application" "argocd_wi_appreg" {
 }
 
 resource "azuread_application" "argocd_ui_appreg" {
-  display_name = lower("tgc-akshosting-argocduig-auth") 
+  display_name = lower("tgc-akshosting-argocd-ui-auth") 
 }
 
 resource "azuread_application_api_access" "example_msgraph" {
@@ -88,28 +88,6 @@ resource "null_resource" "apply_manifest" {
   }
 }
 
-
-#azure.workload.identity/use: "true"
-# resource "kubernetes_manifest" "patch_argocd_server_deployment_annotation" {
-#   manifest = {
-#     apiVersion = "apps/v1"
-#     kind       = "Deployment"
-#     metadata = {
-#       name      = "argocd-server"
-#       namespace = "argocd"
-#       annotations = {
-#         "azure.workload.identity/use" = "true"
-#       }
-#     }
-#   }
-
-#   lifecycle {
-#     ignore_changes = [
-#       manifest["spec"]
-#     ]
-#   }
-# }
-
 resource "null_resource" "patch_argocd_deployment" {
   provisioner "local-exec" {
     command = <<EOT
@@ -129,29 +107,6 @@ resource "null_resource" "patch_argocd_service_account" {
     EOT
   }
 }
-
-
-# resource "kubernetes_manifest" "patch_argocd_server_serviceaccount" {
-#   manifest = {
-#     apiVersion = "v1"
-#     kind       = "ServiceAccount"
-#     metadata = {
-#       name      = "argocd-server"
-#       namespace = "argocd"
-#       annotations = {
-#         "azure.workload.identity/client-id" = azuread_application.argocd_ui_appreg.client_id
-#       }
-#     }
-#   }
-
-#   lifecycle {
-#     ignore_changes = [
-#       manifest["secrets"],
-#       manifest["imagePullSecrets"]
-#     ]
-#   }
-# }
-
 
 module "nginx_controller" {
   source = "./modules/nginx_controller"
