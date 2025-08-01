@@ -3,15 +3,16 @@ resource "azuread_application" "argocd_wi_appreg" {
 }
 
 resource "azuread_application" "argocd_ui_appreg" {
-  display_name = lower("tgc-akshosting-argocduig-auth")
-  required_resource_access {
-    resource_app_id = data.azuread_application_published_app_ids.well_known.result.MicrosoftGraph
-    resource_access {
-      id   = azuread_service_principal.msgraph.oauth2_permission_scope_ids["User.ReadWrite"]
-      type = "Scope"
-    }
-  }
- 
+  display_name = lower("tgc-akshosting-argocduig-auth") 
+}
+
+resource "azuread_application_api_access" "example_msgraph" {
+  application_id = azuread_application_registration.argocd_ui_appreg.id
+  api_client_id  = data.azuread_application_published_app_ids.well_known.result["MicrosoftGraph"]
+
+  scope_ids = [
+    data.azuread_service_principal.msgraph.oauth2_permission_scope_ids["User.Read.All"],
+  ]
 }
 
 resource "azuread_service_principal" "product_environment_spns" {
