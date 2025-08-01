@@ -39,7 +39,7 @@ resource "azuread_application_redirect_uris" "example_public" {
 }
 
 resource "azuread_application_federated_identity_credential" "example" {
-  application_id = azuread_application.argocd_ui_appreg.client_id
+  application_id = azuread_application.argocd_ui_appreg.id
   display_name   = "argocd-ui"
   description    = "Credentials for ArgoCD UI integration"
   audiences      = ["api://AzureADTokenExchange"]
