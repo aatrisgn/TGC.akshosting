@@ -90,47 +90,67 @@ resource "null_resource" "apply_manifest" {
 
 
 #azure.workload.identity/use: "true"
-resource "kubernetes_manifest" "patch_argocd_server_deployment_annotation" {
-  manifest = {
-    apiVersion = "apps/v1"
-    kind       = "Deployment"
-    metadata = {
-      name      = "argocd-server"
-      namespace = "argocd"
-      annotations = {
-        "azure.workload.identity/use" = "true"
-      }
-    }
-  }
+# resource "kubernetes_manifest" "patch_argocd_server_deployment_annotation" {
+#   manifest = {
+#     apiVersion = "apps/v1"
+#     kind       = "Deployment"
+#     metadata = {
+#       name      = "argocd-server"
+#       namespace = "argocd"
+#       annotations = {
+#         "azure.workload.identity/use" = "true"
+#       }
+#     }
+#   }
 
-  lifecycle {
-    ignore_changes = [
-      manifest["spec"]
-    ]
+#   lifecycle {
+#     ignore_changes = [
+#       manifest["spec"]
+#     ]
+#   }
+# }
+
+resource "null_resource" "patch_argocd_deployment" {
+  provisioner "local-exec" {
+    command = <<EOT
+      kubectl patch deployment argocd-server \
+        -n argocd \
+        -p '{"metadata":{"annotations":{"azure.workload.identity/use":"true"}}}'
+    EOT
+  }
+}
+
+resource "null_resource" "patch_argocd_service_account" {
+  provisioner "local-exec" {
+    command = <<EOT
+      kubectl patch serviceaccount argocd-server \
+        -n argocd \
+        -p '{"metadata":{"annotations":{"azure.workload.identity/client-id":"${azuread_application.argocd_ui_appreg.client_id}"}}}'
+    EOT
   }
 }
 
 
-resource "kubernetes_manifest" "patch_argocd_server_serviceaccount" {
-  manifest = {
-    apiVersion = "v1"
-    kind       = "ServiceAccount"
-    metadata = {
-      name      = "argocd-server"
-      namespace = "argocd"
-      annotations = {
-        "azure.workload.identity/client-id" = azuread_application.argocd_ui_appreg.client_id
-      }
-    }
-  }
+# resource "kubernetes_manifest" "patch_argocd_server_serviceaccount" {
+#   manifest = {
+#     apiVersion = "v1"
+#     kind       = "ServiceAccount"
+#     metadata = {
+#       name      = "argocd-server"
+#       namespace = "argocd"
+#       annotations = {
+#         "azure.workload.identity/client-id" = azuread_application.argocd_ui_appreg.client_id
+#       }
+#     }
+#   }
 
-  lifecycle {
-    ignore_changes = [
-      manifest["secrets"],
-      manifest["imagePullSecrets"]
-    ]
-  }
-}
+#   lifecycle {
+#     ignore_changes = [
+#       manifest["secrets"],
+#       manifest["imagePullSecrets"]
+#     ]
+#   }
+# }
 
 
 module "nginx_controller" {
