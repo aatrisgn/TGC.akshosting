@@ -108,6 +108,23 @@ resource "null_resource" "patch_argocd_service_account" {
   }
 }
 
+resource "null_resource" "patch_argocd_configmap" {
+  provisioner "local-exec" {
+    command = <<EOT
+      kubectl patch configmap argocd-server \
+        -n argocd \
+        --type merge \
+        -p '{
+          "data": {
+            "url": "https://argo.dev.tgcportal.com/",
+            "oidc.config": "name: Azure\nissuer: https://login.microsoftonline.com/${var.tenant_id}/v2.0\nclientID: ${azuread_application.argocd_ui_appreg.client_id}\nazure:\n  useWorkloadIdentity: true\nrequestedIDTokenClaims:\n  groups:\n    essential: false\n    value: \"SecurityGroup\"\nrequestedScopes:\n  - openid\n  - profile\n  - email"
+          }
+        }'
+    EOT
+  }
+}
+
+
 module "nginx_controller" {
   source = "./modules/nginx_controller"
   
