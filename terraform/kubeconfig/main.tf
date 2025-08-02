@@ -86,10 +86,13 @@ resource "null_resource" "patch_argocd_deployment" {
     command = <<EOT
       kubectl patch deployment argocd-server \
         -n argocd \
-        -p '[{"op": "add", "path": "/spec/template/metadata/labels/azure.workload.identity~1use", "value": "true"}]'
+        -p '{"spec": {"template": {"metadata":{"annotations":{"azure.workload.identity/use":"true"}}}}}'
+
     EOT
   }
 }
+
+#        -p '[{"op": "add", "path": "/spec/template/metadata/labels/azure.workload.identity/use", "value": "true"}]'
 
 resource "null_resource" "patch_argocd_service_account" {
   provisioner "local-exec" {
