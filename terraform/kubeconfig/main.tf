@@ -16,6 +16,11 @@ resource "azuread_application" "argocd_ui_appreg" {
     redirect_uris = ["http://localhost:8085/auth/callback"]
   }
 
+  #This should be changed at some point
+  lifecycle {
+    ignore_changes = [ required_resource_access ]
+  }
+
   # required_resource_access {
     
   # }
@@ -81,7 +86,7 @@ resource "null_resource" "patch_argocd_deployment" {
     command = <<EOT
       kubectl patch deployment argocd-server \
         -n argocd \
-        -p '{"template": {"metadata":{"annotations":{"azure.workload.identity/use":"true"}}}}'
+        -p '[{"op": "add", "path": "/spec/template/metadata/labels/azure.workload.identity~1use", "value": "true"}]'
     EOT
   }
 }
