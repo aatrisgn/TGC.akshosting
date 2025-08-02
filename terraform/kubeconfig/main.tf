@@ -86,8 +86,7 @@ resource "null_resource" "patch_argocd_deployment" {
     command = <<EOT
       kubectl patch deployment argocd-server \
         -n argocd \
-        -p '{"spec": {"template": {"metadata":{"annotations":{"azure.workload.identity/use":"true"}}}}}'
-
+        -p '{"spec": {"template": {"metadata":{"labels":{"azure.workload.identity/use":"true"}}}}}'
     EOT
   }
 }
