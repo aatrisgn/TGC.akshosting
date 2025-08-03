@@ -21,18 +21,14 @@ resource "azuread_application" "argocd_ui_appreg" {
     ignore_changes = [ required_resource_access ]
   }
 
-  # required_resource_access {
-    
-  # }
-}
+  required_resource_access {
+    resource_app_id = data.azuread_application_published_app_ids.well_known.result["MicrosoftGraph"]
 
-resource "azuread_application_api_access" "example_msgraph" {
-  application_id = azuread_application.argocd_ui_appreg.id
-  api_client_id  = data.azuread_application_published_app_ids.well_known.result["MicrosoftGraph"]
-
-  scope_ids = [
-    data.azuread_service_principal.msgraph.oauth2_permission_scope_ids["User.Read.All"],
-  ]
+    resource_access {
+      id = data.azuread_service_principal.msgraph.oauth2_permission_scope_ids["User.Read.All"]
+      type = "Scope"
+    }
+  }
 }
 
 resource "azuread_service_principal" "product_environment_spns" {
@@ -55,12 +51,6 @@ resource "azurerm_public_ip" "aks_public_ip" {
   resource_group_name = data.azurerm_resource_group.default_resource_group.name
   allocation_method   = "Static"
   sku                 = "Standard"
-}
-
-resource "kubernetes_namespace" "streetcroquet_namespace" {
-  metadata {
-    name = "streetcroquet"
-  }
 }
 
 resource "kubernetes_namespace" "argocd_namespace" {
@@ -129,102 +119,6 @@ module "nginx_controller" {
 
 module "cert_manager" {
   source = "./modules/cert_manager"
-}
-
-resource "kubernetes_deployment" "aks_helloworld_one" {
-  metadata {
-    name = "aks-streetcroquet"
-    namespace = kubernetes_namespace.streetcroquet_namespace.metadata.0.name
-    labels = {
-      app = "aks-streetcroquet"
-    }
-  }
-
-  spec {
-    replicas = 1
-
-    selector {
-      match_labels = {
-        app = "aks-streetcroquet"
-      }
-    }
-
-    template {
-      metadata {
-        labels = {
-          app = "aks-streetcroquet"
-        }
-      }
-
-      spec {
-        container {
-          name  = "aks-streetcroquet"
-          image = "tgclzdevacr.azurecr.io/streetcroquetdk:latest"
-
-          port {
-            container_port = 80
-          }
-        }
-      }
-    }
-  }
-}
-
-resource "kubernetes_service" "aks_helloworld_one" {
-  metadata {
-    name = "aks-streetcroquet"
-    namespace = kubernetes_namespace.streetcroquet_namespace.metadata.0.name
-  }
-
-  spec {
-    selector = {
-      app = "aks-streetcroquet"
-    }
-
-    port {
-      port        = 80
-      target_port = 80
-    }
-
-    type = "ClusterIP"
-  }
-}
-
-resource "kubernetes_ingress_v1" "hello_world_ingress" {
-  metadata {
-    name = "streetcroquet-ingress"
-    namespace = kubernetes_namespace.streetcroquet_namespace.metadata.0.name
-    annotations = {
-      "nginx.ingress.kubernetes.io/ssl-redirect"  = "false"
-      "cert-manager.io/issuer": "letsencrypt-staging"
-    }
-  }
-
-  spec {
-    ingress_class_name = "nginx"
-    tls {
-        secret_name = "dev-streetcrocket-tls"
-        hosts = ["dev.streetcrocket.com"]
-      }
-    rule {
-      host = "dev.streetcrocket.com"
-      http {
-        path {
-          path      = "/"
-          path_type = "Prefix"
-
-          backend {
-            service {
-              name = "aks-streetcroquet"
-              port {
-                number = 80
-              }
-            }
-          }
-        }
-      }
-    }
-  }
 }
 
 resource "kubernetes_ingress_v1" "argocd_ingress" {
