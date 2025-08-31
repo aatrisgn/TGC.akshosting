@@ -43,8 +43,8 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     vm_size         = "Standard_B2s"
     os_disk_size_gb = 30
     auto_scaling_enabled = true
-    max_count = 5
-    min_count = 2
+    max_count = 1
+    min_count = 1
     upgrade_settings {
       drain_timeout_in_minutes      = 0 
       max_surge                     = "10%"
@@ -73,5 +73,25 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
 
   tags = {
     environment = "personal"
+  }
+}
+
+resource "azurerm_kubernetes_cluster_node_pool" "spot_pool" {
+  name                  = "spot_pool"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks_cluster.id
+  vm_size               = "Standard_DS2_v2"
+  node_count            = 1
+  auto_scaling_enabled = true
+  max_count = 5
+  priority = "Spot"
+  eviction_policy = "Delete"
+  spot_max_price = "-1"
+  node_labels = {
+    "kubernetes.azure.com/scalesetpriority": "spot"
+  }
+  node_taints = [ "kubernetes.azure.com/scalesetpriority=spot:NoSchedule" ]
+
+  tags = {
+    Environment = "Production"
   }
 }

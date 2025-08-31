@@ -81,8 +81,6 @@ resource "null_resource" "patch_argocd_deployment" {
   }
 }
 
-#        -p '[{"op": "add", "path": "/spec/template/metadata/labels/azure.workload.identity/use", "value": "true"}]'
-
 resource "null_resource" "patch_argocd_service_account" {
   provisioner "local-exec" {
     command = <<EOT
@@ -154,6 +152,5 @@ resource "kubernetes_ingress_v1" "argocd_ingress" {
       }
     }
   }
-
   depends_on = [ module.cert_manager ]
 }
