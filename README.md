@@ -1,2 +1,3 @@
-# default_repository
-Default repository used for landingzone repositories
+# AKS Hosting
+
+This repository is for managing my personal AKS cluster for hosting things via Argo CD.

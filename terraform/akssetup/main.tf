@@ -23,20 +23,6 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   oidc_issuer_enabled              = true
   workload_identity_enabled        = true
   node_resource_group              = "rg-akshosting-dynamic-${var.environment_type_name}-west-europe"
-  #http_application_routing_enabled = true
-
-  # web_app_routing {
-  #   default_nginx_controller = "AnnotationControlled"
-  #   dns_zone_ids             = []
-  #   web_app_routing_identity = [
-  #   {
-  #     client_id                 = "c8fc8886-b149-4750-ac67-56809ed9c003"
-  #     object_id                 = "967b3f8d-9e30-4c05-9e4b-a07f42f39e29"
-  #     user_assigned_identity_id = "/subscriptions/***/resourcegroups/rg-akshosting-dynamic-dev-west-europe/providers/Microsoft.ManagedIdentity/userAssignedIdentities/webapprouting-aks-akshosting-dev-westeurope"
-  #   },
-  #   ]
-  # }
-
 
   default_node_pool {
     name            = "default"
@@ -69,7 +55,6 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     network_plugin    = "azure"
     load_balancer_sku = "standard"
   }
-
 
   tags = {
     environment = "personal"
