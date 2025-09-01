@@ -77,20 +77,12 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
 }
 
 resource "azurerm_kubernetes_cluster_node_pool" "spot_pool" {
-  name                  = "spot"
+  name                  = "workload"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks_cluster.id
-  vm_size               = "Standard_D2as_v5"
+  vm_size               = "Standard_B2pls_v2"
   node_count            = 1
   auto_scaling_enabled = true
   max_count = 5
-  priority = "Spot"
-  eviction_policy = "Delete"
-  spot_max_price = "-1"
-  node_labels = {
-    "kubernetes.azure.com/scalesetpriority": "spot"
-  }
-  node_taints = [ "kubernetes.azure.com/scalesetpriority=spot:NoSchedule" ]
-
   tags = {
     Environment = "Production"
   }
