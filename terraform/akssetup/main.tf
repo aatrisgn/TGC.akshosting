@@ -79,7 +79,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
 resource "azurerm_kubernetes_cluster_node_pool" "spot_pool" {
   name                  = "spot"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks_cluster.id
-  vm_size               = "Standard_DS2_v2"
+  vm_size               = "Standard_A2_v2"
   node_count            = 1
   auto_scaling_enabled = true
   max_count = 5
