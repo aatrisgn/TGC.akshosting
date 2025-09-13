@@ -12,7 +12,6 @@ resource "azurerm_role_assignment" "network_contributor" {
 
 #TODO:
 #Update app reg accordingly to Entra
-#Enable logging
 #Fix DNS domain for it
 # We need to ensure pull access on ACR
 resource "azurerm_kubernetes_cluster" "aks_cluster" {
@@ -41,10 +40,6 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   identity {
     type         = "UserAssigned"
     identity_ids = [azurerm_user_assigned_identity.aks_identity.id]
-  }
-
-  oms_agent {
-    log_analytics_workspace_id = data.azurerm_log_analytics_workspace.shared_log_analytic_workspace.id
   }
 
   key_vault_secrets_provider {
