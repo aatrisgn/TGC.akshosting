@@ -100,7 +100,7 @@ resource "null_resource" "patch_argocd_configmap" {
         --type merge \
         -p '{
           "data": {
-            "url": "https://argo.dev.tgcportal.com/",
+            "url": "https://argocd.tgcportal.com/",
             "oidc.config": "name: Azure\nissuer: https://login.microsoftonline.com/${var.tenant_id}/v2.0\nclientID: ${azuread_application.argocd_ui_appreg.client_id}\nazure:\n  useWorkloadIdentity: true\nrequestedIDTokenClaims:\n  groups:\n    essential: false\n    value: \"SecurityGroup\"\nrequestedScopes:\n  - openid\n  - profile\n  - email"
           }
         }'
