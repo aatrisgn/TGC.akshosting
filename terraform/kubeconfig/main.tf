@@ -9,6 +9,7 @@ resource "azuread_application" "argocd_ui_appreg" {
     redirect_uris = [
     "https://${azurerm_public_ip.aks_public_ip.ip_address}/auth/callback",
     "https://argo.dev.tgcportal.com/auth/callback",
+    "https://argocd.tgcportal.com/auth/callback",
     ]
   }
 
