@@ -8,7 +8,6 @@ resource "azuread_application" "argocd_ui_appreg" {
   web {
     redirect_uris = [
     "https://${azurerm_public_ip.aks_public_ip.ip_address}/auth/callback",
-    "https://argo.dev.tgcportal.com/auth/callback",
     "https://argocd.tgcportal.com/auth/callback",
     ]
   }
@@ -118,40 +117,4 @@ module "nginx_controller" {
 
 module "cert_manager" {
   source = "./modules/cert_manager"
-}
-
-resource "kubernetes_ingress_v1" "argocd_ingress" {
-  metadata {
-    name = "argocd-ingress"
-    namespace = "argocd"
-    annotations = {
-      "cert-manager.io/issuer": "letsencrypt-staging"
-      "nginx.ingress.kubernetes.io/force-ssl-redirect"= "true"
-      "nginx.ingress.kubernetes.io/ssl-passthrough" = "true"
-      "nginx.ingress.kubernetes.io/backend-protocol"   = "HTTPS"
-    }
-  }
-
-  spec {
-    ingress_class_name = "nginx"
-    rule {
-      host = "argo.dev.tgcportal.com"
-      http {
-        path {
-          path      = "/"
-          path_type = "Prefix"
-
-          backend {
-            service {
-              name = "argocd-server"
-              port {
-                name = "https"
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  depends_on = [ module.cert_manager ]
 }

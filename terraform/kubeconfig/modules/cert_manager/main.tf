@@ -30,35 +30,3 @@ resource "helm_release" "cert_manager" {
     }
   ]
 }
-
-resource "kubernetes_manifest" "argo_cert_issuer" {
-  manifest = {
-    apiVersion = "cert-manager.io/v1"
-    kind       = "Issuer"
-    metadata = {
-      name = "letsencrypt-staging"
-      namespace = "argocd"
-    }
-    spec = {
-      acme = {
-        server = "https://acme-staging-v02.api.letsencrypt.org/directory"
-        email  = "asger.thyregod@gmail.com"
-        profile = "tlsserver"
-        privateKeySecretRef = {
-          name = "letsencrypt-staging"
-        }
-        
-        solvers = [
-          {
-            http01 = {
-              ingress = {
-                class = "nginx"
-              }
-            }
-          }
-        ]
-      }
-    }
-  }
-  depends_on = [ helm_release.cert_manager ]
-}
