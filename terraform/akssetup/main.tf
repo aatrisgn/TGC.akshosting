@@ -30,6 +30,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     auto_scaling_enabled = true
     max_count = 1
     min_count = 1
+    temporary_name_for_rotation = "temp_pool_rotation"
     upgrade_settings {
       drain_timeout_in_minutes      = 0 
       max_surge                     = "10%"
@@ -63,6 +64,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "spot_pool" {
   node_count            = 1
   auto_scaling_enabled = true
   max_count = 5
+  os_disk_size_gb = 30
   tags = {
     Environment = "Production"
   }
