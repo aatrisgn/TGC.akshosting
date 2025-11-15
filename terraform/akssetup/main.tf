@@ -15,24 +15,24 @@ resource "azurerm_role_assignment" "network_contributor" {
 #Fix DNS domain for it
 # We need to ensure pull access on ACR
 resource "azurerm_kubernetes_cluster" "aks_cluster" {
-  name                             = "aks-akshosting-${var.environment_type_name}-${local.resource_location_name}"
-  location                         = data.azurerm_resource_group.default_resource_group.location
-  resource_group_name              = data.azurerm_resource_group.default_resource_group.name
-  dns_prefix                       = "aks-akshosting-${var.environment_type_name}"
-  oidc_issuer_enabled              = true
-  workload_identity_enabled        = true
-  node_resource_group              = "rg-akshosting-dynamic-${var.environment_type_name}-west-europe"
+  name                      = "aks-akshosting-${var.environment_type_name}-${local.resource_location_name}"
+  location                  = data.azurerm_resource_group.default_resource_group.location
+  resource_group_name       = data.azurerm_resource_group.default_resource_group.name
+  dns_prefix                = "aks-akshosting-${var.environment_type_name}"
+  oidc_issuer_enabled       = true
+  workload_identity_enabled = true
+  node_resource_group       = "rg-akshosting-dynamic-${var.environment_type_name}-west-europe"
 
   default_node_pool {
-    name            = "default"
-    vm_size         = "Standard_B2s"
-    os_disk_size_gb = 30
-    auto_scaling_enabled = true
-    max_count = 1
-    min_count = 1
-    temporary_name_for_rotation = "temp_pool_rotation"
+    name                        = "default"
+    vm_size                     = "Standard_B2s"
+    os_disk_size_gb             = 30
+    auto_scaling_enabled        = true
+    max_count                   = 1
+    min_count                   = 1
+    temporary_name_for_rotation = "temppoolrotation"
     upgrade_settings {
-      drain_timeout_in_minutes      = 0 
+      drain_timeout_in_minutes      = 0
       max_surge                     = "10%"
       node_soak_duration_in_minutes = 0
     }
@@ -62,9 +62,9 @@ resource "azurerm_kubernetes_cluster_node_pool" "spot_pool" {
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks_cluster.id
   vm_size               = "Standard_B2pls_v2"
   node_count            = 1
-  auto_scaling_enabled = true
-  max_count = 5
-  os_disk_size_gb = 30
+  auto_scaling_enabled  = true
+  max_count             = 5
+  os_disk_size_gb       = 30
   tags = {
     Environment = "Production"
   }
