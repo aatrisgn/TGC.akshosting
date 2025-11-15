@@ -65,6 +65,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "spot_pool" {
   auto_scaling_enabled  = true
   max_count             = 5
   os_disk_size_gb       = 30
+  temporary_name_for_rotation = "workloadtemp"
   tags = {
     Environment = "Production"
   }
