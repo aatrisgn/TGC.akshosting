@@ -30,7 +30,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     auto_scaling_enabled        = true
     max_count                   = 1
     min_count                   = 1
-    temporary_name_for_rotation = "temppoolrotation"
+    temporary_name_for_rotation = "rotationpool"
     upgrade_settings {
       drain_timeout_in_minutes      = 0
       max_surge                     = "10%"
